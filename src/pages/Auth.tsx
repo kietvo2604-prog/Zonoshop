@@ -147,11 +147,11 @@ const Auth = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full py-3 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <LogIn className="w-4 h-4" />
-              {loading ? "Đang xử lý..." : isLogin ? "Đăng nhập" : "Đăng ký"}
+              {submitting ? "Đang xử lý..." : isLogin ? "Đăng nhập" : "Đăng ký"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
