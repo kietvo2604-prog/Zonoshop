@@ -1,6 +1,7 @@
 import { Search, ShoppingCart, User, Gamepad2, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
+import AnimatedLogo from "./AnimatedLogo";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
