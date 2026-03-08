@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { CreditCard, Smartphone, Wallet, Gift, Copy, CheckCircle, AlertTriangle, ArrowRight } from "lucide-react";
 
 const banks = [
+  { name: "BV Bank", number: "99ZP25275M36980652", holder: "ZALOPAY_VO ANH KIET" },
   { name: "Vietcombank", number: "", holder: "" },
   { name: "MB Bank", number: "", holder: "" },
   { name: "Techcombank", number: "", holder: "" },
