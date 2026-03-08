@@ -53,7 +53,7 @@ const Auth = () => {
         setMessage("Đăng ký thành công! Kiểm tra email để xác nhận tài khoản.");
       }
     }
-    setLoading(false);
+    setSubmitting(false);
   };
 
   const handleGoogleLogin = async () => {
