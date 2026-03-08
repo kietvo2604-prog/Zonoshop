@@ -204,7 +204,7 @@ const TopUp = () => {
             </div>
 
             {/* Submit */}
-            <button className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <button onClick={handleSubmit} className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
               <CreditCard className="w-4 h-4" />
               Nạp thẻ — Thực nhận {formatVND(selectedDenom * 0.8)}
               <ArrowRight className="w-4 h-4" />
