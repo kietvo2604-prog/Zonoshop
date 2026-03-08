@@ -35,6 +35,7 @@ const TopUp = () => {
   const [copiedField, setCopiedField] = useState("");
   const [errors, setErrors] = useState<{ serial?: string; code?: string }>({});
   const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
 
