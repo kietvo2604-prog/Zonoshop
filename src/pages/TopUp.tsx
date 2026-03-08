@@ -65,9 +65,28 @@ const TopUp = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateCard()) return;
-    // TODO: submit topup request
+    if (!user) {
+      toast({ title: "Vui lòng đăng nhập", description: "Bạn cần đăng nhập để nạp thẻ.", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const { error } = await supabase.from("topup_requests").insert({
+      user_id: user.id,
+      amount: selectedDenom,
+      method: `Thẻ cào ${currentCard.name}`,
+      note: `Seri: ${serial} | Mã: ${code} | Mệnh giá: ${selectedDenom}`,
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Lỗi", description: "Không thể gửi yêu cầu. Vui lòng thử lại.", variant: "destructive" });
+    } else {
+      toast({ title: "✅ Đã gửi yêu cầu nạp thẻ", description: `Thẻ ${currentCard.name} mệnh giá ${formatVND(selectedDenom)} đang chờ Admin xử lý.` });
+      setSerial("");
+      setCode("");
+      setErrors({});
+    }
   };
 
   const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
