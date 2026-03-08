@@ -164,10 +164,16 @@ const TopUp = () => {
               </p>
             </div>
 
+            <div className="bg-muted/50 border border-border rounded-lg p-3 text-center text-sm">
+              <span className="text-muted-foreground">Mệnh giá: {formatVND(selectedDenom)} → Thực nhận: </span>
+              <span className="text-primary font-bold">{formatVND(selectedDenom * 0.8)}</span>
+              <span className="text-destructive text-xs ml-1">(-20%)</span>
+            </div>
+
             {/* Submit */}
             <button className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
               <CreditCard className="w-4 h-4" />
-              Nạp thẻ — {formatVND(selectedDenom)}
+              Nạp thẻ — Thực nhận {formatVND(selectedDenom * 0.8)}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
