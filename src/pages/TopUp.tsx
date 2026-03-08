@@ -98,6 +98,17 @@ const TopUp = () => {
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        {successMessage && (
+          <div className="bg-primary/10 border border-primary/30 rounded-xl p-4 flex items-start gap-3 animate-slide-up">
+            <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-primary">{successMessage}</p>
+              <p className="text-xs text-muted-foreground mt-1">Bạn có thể kiểm tra trạng thái trong lịch sử nạp tiền.</p>
+            </div>
+            <button onClick={() => setSuccessMessage(null)} className="text-muted-foreground hover:text-foreground text-xs">✕</button>
+          </div>
+        )}
+
         <h1 className="font-display text-2xl md:text-3xl font-bold text-primary neon-text text-center">
           NẠP TIỀN VÀO TÀI KHOẢN
         </h1>
