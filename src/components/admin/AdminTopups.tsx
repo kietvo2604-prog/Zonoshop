@@ -16,8 +16,10 @@ type TopupRequest = {
 
 const AdminTopups = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [requests, setRequests] = useState<TopupRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
 
   const fetchRequests = async () => {
