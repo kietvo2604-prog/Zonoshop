@@ -126,7 +126,7 @@ const TopUp = () => {
                 {cardTypes.map((ct) => (
                   <button
                     key={ct.id}
-                    onClick={() => setSelectedCard(ct.id)}
+                    onClick={() => { setSelectedCard(ct.id); setSerial(""); setCode(""); setErrors({}); }}
                     className={`flex-1 py-3 rounded-lg font-semibold text-sm border transition-all ${
                       selectedCard === ct.id
                         ? "border-primary bg-primary/10 text-primary neon-border"
