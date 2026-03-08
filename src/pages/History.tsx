@@ -30,7 +30,16 @@ const statusStyles: Record<string, { bg: string; text: string; label: string }> 
 };
 
 const History = () => {
-  const [tab, setTab] = useState<Tab>("purchases");
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as Tab) || "purchases";
+  const [tab, setTab] = useState<Tab>(initialTab);
+
+  useEffect(() => {
+    const t = searchParams.get("tab") as Tab;
+    if (t && ["purchases", "topups", "balance"].includes(t)) {
+      setTab(t);
+    }
+  }, [searchParams]);
 
   const totalTopup = mockTopups.filter(t => t.status === "success").reduce((s, t) => s + t.received, 0);
   const totalSpent = mockPurchases.filter(p => p.status === "success").reduce((s, p) => s + p.price, 0);
