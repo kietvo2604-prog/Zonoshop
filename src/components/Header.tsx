@@ -10,14 +10,18 @@ const Header = () => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
   const historyRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) { setIsAdmin(false); return; }
+    if (!user) { setIsAdmin(false); setBalance(null); return; }
     import("@/integrations/supabase/client").then(({ supabase }) => {
       supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
         setIsAdmin(!!(data && data.length > 0));
+      });
+      supabase.from("profiles").select("balance").eq("user_id", user.id).single().then(({ data }) => {
+        setBalance(data?.balance ?? 0);
       });
     });
   }, [user]);
@@ -92,10 +96,12 @@ const Header = () => {
                     <div className="px-4 py-2.5 border-b border-border">
                       <p className="text-sm font-medium text-foreground">{displayName}</p>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
+                      {balance !== null && (
+                        <p className="text-xs font-bold text-primary mt-1">
+                          💰 Số dư: {balance.toLocaleString("vi-VN")}đ
+                        </p>
+                      )}
                     </div>
-                    <a href="/lich-su?tab=balance" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                      <Wallet className="w-4 h-4" /> Số dư
-                    </a>
                     <a href="/lich-su" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
                       <User className="w-4 h-4" /> Tài khoản
                     </a>
