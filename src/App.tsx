@@ -27,6 +27,7 @@ const App = () => (
             <Route path="/nap-tien" element={<TopUp />} />
             <Route path="/lich-su" element={<History />} />
             <Route path="/dang-nhap" element={<Auth />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
