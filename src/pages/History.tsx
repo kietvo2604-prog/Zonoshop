@@ -96,19 +96,28 @@ const History = () => {
     }
   };
 
-  // Build balance change events from topups
-  const balanceEvents = topups
-    .filter((t) => t.status === "approved" || t.status === "rejected")
-    .map((t) => ({
-      id: t.id,
-      type: t.status === "approved" ? ("topup" as const) : ("rejected" as const),
-      label: t.method,
-      amount: t.status === "approved" ? t.amount : 0,
-      date: t.created_at,
-      status: t.status,
-    }));
+  // Build balance change events from topups AND orders
+  const balanceEvents = [
+    ...topups
+      .filter((t) => t.status === "approved")
+      .map((t) => ({
+        id: t.id,
+        type: "topup" as const,
+        label: t.method,
+        amount: t.amount,
+        date: t.created_at,
+      })),
+    ...orders.map((o) => ({
+      id: o.id,
+      type: "purchase" as const,
+      label: o.product_name,
+      amount: o.price,
+      date: o.created_at,
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const totalTopup = topups.filter((t) => t.status === "approved").reduce((s, t) => s + t.amount, 0);
+  const totalSpent = orders.reduce((s, o) => s + o.price, 0);
 
   if (authLoading) {
     return (
