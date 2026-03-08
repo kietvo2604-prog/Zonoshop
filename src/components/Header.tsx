@@ -9,8 +9,18 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
+        setIsAdmin(!!(data && data.length > 0));
+      });
+    });
+  }, [user]);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
