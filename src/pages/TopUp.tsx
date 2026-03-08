@@ -76,17 +76,20 @@ const TopUp = () => {
             <Wallet className="w-4 h-4" />
             ATM / Ví Điện Tử
             <span className="gradient-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-              +20%
+              +100%
             </span>
           </button>
         </div>
 
         {/* Card Tab */}
         {tab === "card" && (
-          <div className="bg-card border border-border rounded-xl p-6 neon-card animate-slide-up space-y-6">
+           <div className="bg-card border border-border rounded-xl p-6 neon-card animate-slide-up space-y-6">
             <div className="flex items-center gap-2 mb-2">
               <CreditCard className="w-6 h-6 text-neon-cyan" />
               <h2 className="font-display text-lg font-bold text-secondary neon-cyan-text">NẠP QUA THẺ CÀO</h2>
+              <span className="gradient-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
+                -20% chiết khấu
+              </span>
             </div>
 
             {/* Card Type */}
@@ -161,10 +164,16 @@ const TopUp = () => {
               </p>
             </div>
 
+            <div className="bg-muted/50 border border-border rounded-lg p-3 text-center text-sm">
+              <span className="text-muted-foreground">Mệnh giá: {formatVND(selectedDenom)} → Thực nhận: </span>
+              <span className="text-primary font-bold">{formatVND(selectedDenom * 0.8)}</span>
+              <span className="text-destructive text-xs ml-1">(-20%)</span>
+            </div>
+
             {/* Submit */}
             <button className="w-full py-3.5 gradient-primary text-primary-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
               <CreditCard className="w-4 h-4" />
-              Nạp thẻ — {formatVND(selectedDenom)}
+              Nạp thẻ — Thực nhận {formatVND(selectedDenom * 0.8)}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -179,10 +188,10 @@ const TopUp = () => {
                 <Gift className="w-8 h-8 text-accent-foreground" />
                 <div>
                   <p className="font-bold text-accent-foreground">ƯU ĐÃI ĐẶC BIỆT</p>
-                  <p className="text-sm text-accent-foreground/80">Nạp qua ATM/Ví điện tử nhận thêm +20% giá trị!</p>
+                  <p className="text-sm text-accent-foreground/80">Nạp qua ATM/Ví điện tử nhận 100% giá trị — không chiết khấu!</p>
                 </div>
               </div>
-              <span className="font-display text-2xl font-bold text-accent-foreground">+20%</span>
+              <span className="font-display text-2xl font-bold text-accent-foreground">100%</span>
             </div>
 
             {/* Bank accounts */}
