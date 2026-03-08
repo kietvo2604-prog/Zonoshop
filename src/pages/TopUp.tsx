@@ -35,6 +35,7 @@ const TopUp = () => {
   const [copiedField, setCopiedField] = useState("");
   const [errors, setErrors] = useState<{ serial?: string; code?: string }>({});
   const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
 
@@ -82,7 +83,7 @@ const TopUp = () => {
     if (error) {
       toast({ title: "Lỗi", description: "Không thể gửi yêu cầu. Vui lòng thử lại.", variant: "destructive" });
     } else {
-      toast({ title: "✅ Đã gửi yêu cầu nạp thẻ", description: `Thẻ ${currentCard.name} mệnh giá ${formatVND(selectedDenom)} đang chờ Admin xử lý.` });
+      setSuccessMessage(`✅ Đã gửi yêu cầu nạp thẻ ${currentCard.name} mệnh giá ${formatVND(selectedDenom)}. Đang chờ Admin xử lý, vui lòng đợi!`);
       setSerial("");
       setCode("");
       setErrors({});
@@ -97,6 +98,17 @@ const TopUp = () => {
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        {successMessage && (
+          <div className="bg-primary/10 border border-primary/30 rounded-xl p-4 flex items-start gap-3 animate-slide-up">
+            <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-primary">{successMessage}</p>
+              <p className="text-xs text-muted-foreground mt-1">Bạn có thể kiểm tra trạng thái trong lịch sử nạp tiền.</p>
+            </div>
+            <button onClick={() => setSuccessMessage(null)} className="text-muted-foreground hover:text-foreground text-xs">✕</button>
+          </div>
+        )}
+
         <h1 className="font-display text-2xl md:text-3xl font-bold text-primary neon-text text-center">
           NẠP TIỀN VÀO TÀI KHOẢN
         </h1>
