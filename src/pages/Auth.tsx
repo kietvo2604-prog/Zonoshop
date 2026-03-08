@@ -57,7 +57,7 @@ const Auth = () => {
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
+    setSubmitting(true);
     setError("");
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
