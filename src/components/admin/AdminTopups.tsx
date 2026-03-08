@@ -98,25 +98,44 @@ const AdminTopups = () => {
                 <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Không có yêu cầu</td></tr>
               ) : (
                 requests.map((r) => (
-                  <tr key={r.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                  <tr key={r.id} className={`border-b border-border hover:bg-muted/30 transition-colors ${r.status === "approved" ? "bg-primary/5" : r.status === "rejected" ? "bg-destructive/5" : ""}`}>
                     <td className="px-4 py-3 text-foreground">{r.method}</td>
+                    <td className="px-4 py-3">
+                      {r.note ? (
+                        <div className="text-xs text-muted-foreground font-mono space-y-0.5">
+                          {r.note.split(" | ").map((part, i) => (
+                            <div key={i}>{part}</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-primary font-mono font-bold">{formatVND(r.amount)}</td>
-                    <td className="px-4 py-3">{statusBadge(r.status)}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleString("vi-VN")}</td>
+                    <td className="px-4 py-3">
+                      {statusBadge(r.status)}
+                      {r.status === "approved" && <p className="text-[10px] text-primary mt-0.5">Đã cộng tiền ✓</p>}
+                      {r.status === "rejected" && <p className="text-[10px] text-destructive mt-0.5">Thẻ sai ✗</p>}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(r.created_at).toLocaleString("vi-VN")}</td>
                     <td className="px-4 py-3 text-right">
                       {r.status === "pending" && (
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            disabled={actionLoading === r.id}
                             onClick={() => handleAction(r.id, r.user_id, r.amount, "approved")}
-                            className="px-3 py-1.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
+                            className="px-3 py-1.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1"
                           >
-                            Duyệt
+                            {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+                            Thẻ đúng
                           </button>
                           <button
+                            disabled={actionLoading === r.id}
                             onClick={() => handleAction(r.id, r.user_id, r.amount, "rejected")}
-                            className="px-3 py-1.5 text-xs font-semibold bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity"
+                            className="px-3 py-1.5 text-xs font-semibold bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1"
                           >
-                            Từ chối
+                            {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
+                            Thẻ sai
                           </button>
                         </div>
                       )}
