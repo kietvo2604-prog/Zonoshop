@@ -123,6 +123,16 @@ const AdminProducts = () => {
               className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm resize-none"
             />
           </div>
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1 block">Thông tin tài khoản (hiện sau khi mua)</label>
+            <textarea
+              value={form.account_info}
+              onChange={(e) => setForm({ ...form, account_info: e.target.value })}
+              rows={3}
+              placeholder="VD: Username: abc123&#10;Password: xyz789&#10;Cookie: ..."
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm resize-none font-mono"
+            />
+          </div>
           <div className="flex gap-2">
             <button onClick={handleSave} className="px-6 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
               {editing ? "Cập nhật" : "Thêm"}
