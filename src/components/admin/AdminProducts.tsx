@@ -48,7 +48,7 @@ const AdminProducts = () => {
   };
 
   const handleEdit = (p: Product) => {
-    setForm({ name: p.name, description: p.description || "", price: p.price, stock: p.stock, category: p.category, status: p.status });
+    setForm({ name: p.name, description: p.description || "", price: p.price, stock: p.stock, category: p.category, status: p.status, account_info: (p as any).account_info || "" });
     setEditing(p);
     setShowForm(true);
   };
