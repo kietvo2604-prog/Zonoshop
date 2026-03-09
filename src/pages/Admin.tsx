@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2 } from "lucide-react";
+import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag } from "lucide-react";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminTopups from "@/components/admin/AdminTopups";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOverview from "@/components/admin/AdminOverview";
+import AdminOrders from "@/components/admin/AdminOrders";
 
-type Tab = "overview" | "users" | "topups" | "products";
+type Tab = "overview" | "users" | "topups" | "products" | "orders";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
@@ -49,6 +50,7 @@ const Admin = () => {
 
   const tabs = [
     { id: "overview" as Tab, name: "Tổng quan", icon: LayoutDashboard },
+    { id: "orders" as Tab, name: "Đơn hàng", icon: ShoppingBag },
     { id: "users" as Tab, name: "Người dùng", icon: Users },
     { id: "topups" as Tab, name: "Nạp tiền", icon: CreditCard },
     { id: "products" as Tab, name: "Sản phẩm", icon: Package },
@@ -110,6 +112,7 @@ const Admin = () => {
       <main className="flex-1 p-6 overflow-auto">
         <div className="max-w-6xl mx-auto">
           {tab === "overview" && <AdminOverview />}
+          {tab === "orders" && <AdminOrders />}
           {tab === "users" && <AdminUsers />}
           {tab === "topups" && <AdminTopups />}
           {tab === "products" && <AdminProducts />}

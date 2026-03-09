@@ -80,12 +80,18 @@ const ProductCard = ({ name, price, stock, description, category, accountInfo }:
       return;
     }
 
+    // Generate order code: VAK + 12 random uppercase/digits
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const randomPart = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    const orderCode = "VAK" + randomPart;
+
     const { error: orderError } = await supabase.from("orders").insert({
       user_id: user.id,
       product_name: name,
       product_category: category,
       price: numericPrice,
       account_info: accountInfo || null,
+      order_code: orderCode,
     } as any);
 
     if (orderError) {
