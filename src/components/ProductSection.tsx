@@ -9,7 +9,6 @@ interface Product {
   stock: number;
   description: string;
   category: string;
-  accountInfo?: string;
 }
 
 interface ProductSectionProps {

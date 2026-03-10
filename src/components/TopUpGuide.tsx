@@ -25,7 +25,7 @@ const TopUpGuide = () => {
             </li>
             <li className="flex items-start gap-2">
               <span className="w-5 h-5 rounded-full gradient-primary text-primary-foreground text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">3</span>
-              Nhấn "Nạp thẻ" và chờ xử lý trong 30 giây.
+              Nhấn "Nạp thẻ" và chờ xử lý. Thực nhận 80% mệnh giá (thuế 20%).
             </li>
           </ul>
         </div>
@@ -33,7 +33,7 @@ const TopUpGuide = () => {
         <div className="bg-muted rounded-xl p-5 border border-border relative overflow-hidden">
           <div className="absolute top-3 right-3">
             <span className="gradient-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-full">
-              +20% 🎁
+              +10% 🎁
             </span>
           </div>
           <div className="flex items-center gap-2 mb-4">
@@ -43,9 +43,9 @@ const TopUpGuide = () => {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
               <Gift className="w-4 h-4 text-neon-orange shrink-0" />
-              <span><strong className="text-neon-orange">ƯU ĐÃI:</strong> Nhận ngay +20% giá trị nạp!</span>
+              <span><strong className="text-neon-orange">ƯU ĐÃI:</strong> Nhận +10% giá trị nạp!</span>
             </li>
-            <li className="text-xs mt-2">Ví dụ: Nạp 100k → nhận 120k trong tài khoản web.</li>
+            <li className="text-xs mt-2">Ví dụ: Nạp 30k → nhận 33k. Nạp 100k → nhận 105k (từ 50k chỉ +5%).</li>
             <li className="text-xs">Hỗ trợ: Momo, ZaloPay, chuyển khoản ngân hàng.</li>
           </ul>
         </div>

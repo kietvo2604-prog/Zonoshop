@@ -141,7 +141,7 @@ const TopUp = () => {
             <Wallet className="w-4 h-4" />
             ATM / Ví Điện Tử
             <span className="gradient-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-              +100%
+              +10%
             </span>
           </button>
         </div>
@@ -260,11 +260,11 @@ const TopUp = () => {
               <div className="flex items-center gap-3">
                 <Gift className="w-8 h-8 text-accent-foreground" />
                 <div>
-                  <p className="font-bold text-accent-foreground">ƯU ĐÃI ĐẶC BIỆT</p>
-                  <p className="text-sm text-accent-foreground/80">Nạp qua ATM/Ví điện tử nhận 100% giá trị — không chiết khấu!</p>
+                  <p className="font-bold text-accent-foreground">ƯU ĐÃI KHI NẠP ATM</p>
+                  <p className="text-sm text-accent-foreground/80">Nạp dưới 50k → +10% bonus. Từ 50k trở lên → +5% bonus!</p>
                 </div>
               </div>
-              <span className="font-display text-2xl font-bold text-accent-foreground">100%</span>
+              <span className="font-display text-2xl font-bold text-accent-foreground">+10%</span>
             </div>
 
             {/* Bank accounts */}

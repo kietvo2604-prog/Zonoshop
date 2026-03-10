@@ -33,17 +33,39 @@ const AdminTopups = () => {
 
   useEffect(() => { fetchRequests(); }, [filter]);
 
-  const handleAction = async (id: string, userId: string, amount: number, action: "approved" | "rejected") => {
+  const calculateCredit = (amount: number, method: string): number => {
+    const isCard = method.toLowerCase().includes("thẻ cào");
+    if (isCard) {
+      // Card: 80% (20% tax)
+      return Math.floor(amount * 0.8);
+    } else {
+      // ATM/Wallet: < 50k → +10%, >= 50k → +5%
+      if (amount >= 50000) {
+        return Math.floor(amount * 1.05);
+      } else {
+        return Math.floor(amount * 1.10);
+      }
+    }
+  };
+
+  const handleAction = async (id: string, userId: string, amount: number, method: string, action: "approved" | "rejected") => {
     setActionLoading(id);
     await supabase.from("topup_requests").update({ status: action, reviewed_by: user?.id }).eq("id", id);
     if (action === "approved") {
+      const creditAmount = calculateCredit(amount, method);
       const { data: profile } = await supabase.from("profiles").select("balance").eq("user_id", userId).single();
       if (profile) {
-        await supabase.from("profiles").update({ balance: profile.balance + amount }).eq("user_id", userId);
+        await supabase.from("profiles").update({ balance: profile.balance + creditAmount }).eq("user_id", userId);
       }
-      toast({ title: "✅ Thẻ đúng — Đã cộng tiền", description: `Đã cộng ${formatVND(amount)} vào tài khoản người dùng.` });
+      const isCard = method.toLowerCase().includes("thẻ cào");
+      toast({
+        title: "✅ Đã duyệt — Cộng tiền thành công",
+        description: isCard
+          ? `Mệnh giá ${formatVND(amount)} → Thực cộng ${formatVND(creditAmount)} (thuế 20%)`
+          : `Nạp ${formatVND(amount)} → Thực cộng ${formatVND(creditAmount)} (bonus ${amount >= 50000 ? "+5%" : "+10%"})`,
+      });
     } else {
-      toast({ title: "❌ Thẻ sai — Đã từ chối", description: `Yêu cầu nạp ${formatVND(amount)} đã bị từ chối.`, variant: "destructive" });
+      toast({ title: "❌ Đã từ chối", description: `Yêu cầu nạp ${formatVND(amount)} đã bị từ chối.`, variant: "destructive" });
     }
     setActionLoading(null);
     fetchRequests();
@@ -66,13 +88,8 @@ const AdminTopups = () => {
 
       <div className="flex gap-2">
         {(["pending", "approved", "rejected", "all"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              filter === f ? "gradient-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-border"
-            }`}
-          >
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === f ? "gradient-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-border"}`}>
             {f === "all" ? "Tất cả" : f === "pending" ? "Chờ duyệt" : f === "approved" ? "Đã duyệt" : "Từ chối"}
           </button>
         ))}
@@ -84,8 +101,9 @@ const AdminTopups = () => {
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Phương thức</th>
-                <th className="text-left px-4 py-3 font-semibold text-foreground">Chi tiết thẻ</th>
-                <th className="text-left px-4 py-3 font-semibold text-foreground">Số tiền</th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Chi tiết</th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Mệnh giá</th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Thực cộng</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Trạng thái</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Thời gian</th>
                 <th className="text-right px-4 py-3 font-semibold text-foreground">Hành động</th>
@@ -93,55 +111,51 @@ const AdminTopups = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
+                <tr><td colSpan={7} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
               ) : requests.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Không có yêu cầu</td></tr>
+                <tr><td colSpan={7} className="text-center py-8 text-muted-foreground">Không có yêu cầu</td></tr>
               ) : (
-                requests.map((r) => (
-                  <tr key={r.id} className={`border-b border-border hover:bg-muted/30 transition-colors ${r.status === "approved" ? "bg-primary/5" : r.status === "rejected" ? "bg-destructive/5" : ""}`}>
-                    <td className="px-4 py-3 text-foreground">{r.method}</td>
-                    <td className="px-4 py-3">
-                      {r.note ? (
-                        <div className="text-xs text-muted-foreground font-mono space-y-0.5">
-                          {r.note.split(" | ").map((part, i) => (
-                            <div key={i}>{part}</div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-primary font-mono font-bold">{formatVND(r.amount)}</td>
-                    <td className="px-4 py-3">
-                      {statusBadge(r.status)}
-                      {r.status === "approved" && <p className="text-[10px] text-primary mt-0.5">Đã cộng tiền ✓</p>}
-                      {r.status === "rejected" && <p className="text-[10px] text-destructive mt-0.5">Thẻ sai ✗</p>}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(r.created_at).toLocaleString("vi-VN")}</td>
-                    <td className="px-4 py-3 text-right">
-                      {r.status === "pending" && (
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            disabled={actionLoading === r.id}
-                            onClick={() => handleAction(r.id, r.user_id, r.amount, "approved")}
-                            className="px-3 py-1.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1"
-                          >
-                            {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
-                            Thẻ đúng
-                          </button>
-                          <button
-                            disabled={actionLoading === r.id}
-                            onClick={() => handleAction(r.id, r.user_id, r.amount, "rejected")}
-                            className="px-3 py-1.5 text-xs font-semibold bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1"
-                          >
-                            {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
-                            Thẻ sai
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                requests.map((r) => {
+                  const creditAmount = calculateCredit(r.amount, r.method);
+                  return (
+                    <tr key={r.id} className={`border-b border-border hover:bg-muted/30 transition-colors ${r.status === "approved" ? "bg-primary/5" : r.status === "rejected" ? "bg-destructive/5" : ""}`}>
+                      <td className="px-4 py-3 text-foreground">{r.method}</td>
+                      <td className="px-4 py-3">
+                        {r.note ? (
+                          <div className="text-xs text-muted-foreground font-mono space-y-0.5">
+                            {r.note.split(" | ").map((part, i) => (<div key={i}>{part}</div>))}
+                          </div>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      </td>
+                      <td className="px-4 py-3 text-foreground font-mono font-bold">{formatVND(r.amount)}</td>
+                      <td className="px-4 py-3 text-primary font-mono font-bold">{formatVND(creditAmount)}</td>
+                      <td className="px-4 py-3">
+                        {statusBadge(r.status)}
+                        {r.status === "approved" && <p className="text-[10px] text-primary mt-0.5">Đã cộng {formatVND(creditAmount)} ✓</p>}
+                        {r.status === "rejected" && <p className="text-[10px] text-destructive mt-0.5">Từ chối ✗</p>}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(r.created_at).toLocaleString("vi-VN")}</td>
+                      <td className="px-4 py-3 text-right">
+                        {r.status === "pending" && (
+                          <div className="flex items-center justify-end gap-2">
+                            <button disabled={actionLoading === r.id}
+                              onClick={() => handleAction(r.id, r.user_id, r.amount, r.method, "approved")}
+                              className="px-3 py-1.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1">
+                              {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+                              Duyệt
+                            </button>
+                            <button disabled={actionLoading === r.id}
+                              onClick={() => handleAction(r.id, r.user_id, r.amount, r.method, "rejected")}
+                              className="px-3 py-1.5 text-xs font-semibold bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1">
+                              {actionLoading === r.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
+                              Từ chối
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

@@ -8,10 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   ShoppingBag, Wallet, TrendingUp, Clock,
   ArrowDownLeft, ArrowUpRight, CheckCircle, XCircle,
-  Loader2, AlertCircle, FileText
+  Loader2, AlertCircle, FileText, History as HistoryIcon
 } from "lucide-react";
 
-type Tab = "orders" | "activity" | "balance";
+type Tab = "history" | "activity" | "balance";
 
 type TopupRequest = {
   id: string;
@@ -37,7 +37,8 @@ const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 const History = () => {
   const { user, loading: authLoading } = useAuth();
   const [searchParams] = useSearchParams();
-  const initialTab = (searchParams.get("tab") as Tab) || "orders";
+  const rawTab = searchParams.get("tab");
+  const initialTab: Tab = rawTab === "orders" ? "history" : (rawTab as Tab) || "history";
   const [tab, setTab] = useState<Tab>(initialTab);
   const [topups, setTopups] = useState<TopupRequest[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -45,8 +46,9 @@ const History = () => {
   const [profileBalance, setProfileBalance] = useState(0);
 
   useEffect(() => {
-    const t = searchParams.get("tab") as Tab;
-    if (t && ["orders", "activity", "balance"].includes(t)) setTab(t);
+    const t = searchParams.get("tab");
+    if (t === "orders") setTab("history");
+    else if (t && ["history", "activity", "balance"].includes(t)) setTab(t as Tab);
   }, [searchParams]);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ const History = () => {
   }, [user]);
 
   const tabs: { id: Tab; label: string; icon: typeof ShoppingBag }[] = [
-    { id: "orders", label: "Đơn hàng", icon: ShoppingBag },
+    { id: "history", label: "Lịch sử", icon: HistoryIcon },
     { id: "activity", label: "Nhật ký", icon: Clock },
     { id: "balance", label: "Biến động số dư", icon: TrendingUp },
   ];
@@ -97,24 +99,11 @@ const History = () => {
     }
   };
 
-  // Build balance change events from topups AND orders
   const balanceEvents = [
     ...topups
       .filter((t) => t.status === "approved")
-      .map((t) => ({
-        id: t.id,
-        type: "topup" as const,
-        label: t.method,
-        amount: t.amount,
-        date: t.created_at,
-      })),
-    ...orders.map((o) => ({
-      id: o.id,
-      type: "purchase" as const,
-      label: o.product_name,
-      amount: o.price,
-      date: o.created_at,
-    })),
+      .map((t) => ({ id: t.id, type: "topup" as const, label: t.method, amount: t.amount, date: t.created_at })),
+    ...orders.map((o) => ({ id: o.id, type: "purchase" as const, label: o.product_name, amount: o.price, date: o.created_at })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const totalTopup = topups.filter((t) => t.status === "approved").reduce((s, t) => s + t.amount, 0);
@@ -131,14 +120,11 @@ const History = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
-        <TopBar />
-        <Header />
+        <TopBar /><Header />
         <main className="container mx-auto px-4 py-16 text-center">
           <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground mb-4">Vui lòng đăng nhập để xem lịch sử giao dịch.</p>
-          <a href="/dang-nhap" className="inline-block px-6 py-3 gradient-primary text-primary-foreground font-semibold rounded-lg text-sm">
-            Đăng nhập
-          </a>
+          <a href="/dang-nhap" className="inline-block px-6 py-3 gradient-primary text-primary-foreground font-semibold rounded-lg text-sm">Đăng nhập</a>
         </main>
         <Footer />
       </div>
@@ -147,49 +133,32 @@ const History = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopBar />
-      <Header />
-
+      <TopBar /><Header />
       <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-primary neon-text text-center">
-          LỊCH SỬ GIAO DỊCH
-        </h1>
-        <p className="text-center text-muted-foreground text-sm">
-          Theo dõi đơn hàng, nhật ký hoạt động và biến động số dư
-        </p>
+        <h1 className="font-display text-2xl md:text-3xl font-bold text-primary neon-text text-center">LỊCH SỬ GIAO DỊCH</h1>
+        <p className="text-center text-muted-foreground text-sm">Theo dõi lịch sử mua hàng, nhật ký hoạt động và biến động số dư</p>
 
-        {/* Tabs */}
         <div className="flex gap-2 justify-center flex-wrap">
           {tabs.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
+            <button key={t.id} onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-5 py-3 rounded-lg font-semibold text-sm transition-all ${
-                tab === t.id
-                  ? "gradient-primary text-primary-foreground neon-border"
-                  : "bg-muted text-muted-foreground hover:text-foreground hover:bg-border"
-              }`}
-            >
-              <t.icon className="w-4 h-4" />
-              {t.label}
+                tab === t.id ? "gradient-primary text-primary-foreground neon-border" : "bg-muted text-muted-foreground hover:text-foreground hover:bg-border"
+              }`}>
+              <t.icon className="w-4 h-4" />{t.label}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
+          <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
         ) : (
           <>
-            {/* Tab: Đơn hàng */}
-            {tab === "orders" && (
+            {tab === "history" && (
               <div className="space-y-3 animate-slide-up">
                 {orders.length === 0 ? (
                   <div className="bg-card border border-border rounded-xl p-10 text-center">
                     <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground">Chưa có đơn hàng nào.</p>
-                    <p className="text-xs text-muted-foreground mt-1">Các tài khoản bạn đã mua sẽ hiển thị ở đây.</p>
+                    <p className="text-muted-foreground">Chưa có lịch sử mua hàng.</p>
                   </div>
                 ) : (
                   orders.map((o) => (
@@ -207,12 +176,9 @@ const History = () => {
                           </div>
                         </div>
                       </div>
-                      <Link
-                        to={`/don-hang/${o.id}`}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary rounded-lg text-xs font-semibold hover:bg-primary/20 transition-colors shrink-0"
-                      >
-                        <FileText className="w-3.5 h-3.5" />
-                        Chi tiết
+                      <Link to={`/don-hang/${o.id}`}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary rounded-lg text-xs font-semibold hover:bg-primary/20 transition-colors shrink-0">
+                        <FileText className="w-3.5 h-3.5" />Chi tiết
                       </Link>
                       <div className="text-right shrink-0">
                         <p className="font-bold text-destructive text-sm">-{formatVND(o.price)}</p>
@@ -226,7 +192,6 @@ const History = () => {
               </div>
             )}
 
-            {/* Tab: Nhật ký hoạt động */}
             {tab === "activity" && (
               <div className="space-y-3 animate-slide-up">
                 {topups.length === 0 ? (
@@ -236,57 +201,28 @@ const History = () => {
                   </div>
                 ) : (
                   topups.map((t) => (
-                    <div
-                      key={t.id}
+                    <div key={t.id}
                       className={`bg-card border rounded-xl p-4 neon-card flex items-center justify-between gap-4 ${
-                        t.status === "approved"
-                          ? "border-primary/30"
-                          : t.status === "rejected"
-                          ? "border-destructive/30"
-                          : "border-border"
-                      }`}
-                    >
+                        t.status === "approved" ? "border-primary/30" : t.status === "rejected" ? "border-destructive/30" : "border-border"
+                      }`}>
                       <div className="flex items-center gap-3 min-w-0">
-                        <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                            t.status === "approved"
-                              ? "bg-primary/10"
-                              : t.status === "rejected"
-                              ? "bg-destructive/10"
-                              : "bg-accent/10"
-                          }`}
-                        >
-                          {t.status === "approved" ? (
-                            <CheckCircle className="w-5 h-5 text-primary" />
-                          ) : t.status === "rejected" ? (
-                            <XCircle className="w-5 h-5 text-destructive" />
-                          ) : (
-                            <Clock className="w-5 h-5 text-accent" />
-                          )}
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                          t.status === "approved" ? "bg-primary/10" : t.status === "rejected" ? "bg-destructive/10" : "bg-accent/10"
+                        }`}>
+                          {t.status === "approved" ? <CheckCircle className="w-5 h-5 text-primary" /> :
+                           t.status === "rejected" ? <XCircle className="w-5 h-5 text-destructive" /> :
+                           <Clock className="w-5 h-5 text-accent" />}
                         </div>
                         <div className="min-w-0">
                           <p className="font-semibold text-foreground text-sm">{t.method}</p>
-                          {t.note && (
-                            <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[200px] md:max-w-[350px]">
-                              {t.note}
-                            </p>
-                          )}
+                          {t.note && <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[200px] md:max-w-[350px]">{t.note}</p>}
                           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                            <Clock className="w-3 h-3" />
-                            {new Date(t.created_at).toLocaleString("vi-VN")}
+                            <Clock className="w-3 h-3" />{new Date(t.created_at).toLocaleString("vi-VN")}
                           </div>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p
-                          className={`font-bold text-sm ${
-                            t.status === "approved"
-                              ? "text-primary"
-                              : t.status === "rejected"
-                              ? "text-destructive line-through"
-                              : "text-accent"
-                          }`}
-                        >
+                        <p className={`font-bold text-sm ${t.status === "approved" ? "text-primary" : t.status === "rejected" ? "text-destructive line-through" : "text-accent"}`}>
                           {t.status === "rejected" ? "" : "+"}{formatVND(t.amount)}
                         </p>
                         {statusBadge(t.status)}
@@ -297,70 +233,45 @@ const History = () => {
               </div>
             )}
 
-            {/* Tab: Biến động số dư */}
             {tab === "balance" && (
               <div className="space-y-4 animate-slide-up">
-                {/* Summary cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-card border border-border rounded-xl p-5 neon-card text-center">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                      <Wallet className="w-6 h-6 text-primary" />
-                    </div>
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3"><Wallet className="w-6 h-6 text-primary" /></div>
                     <p className="text-xs text-muted-foreground mb-1">Số dư hiện tại</p>
                     <p className="font-display text-xl font-bold text-primary neon-text">{formatVND(profileBalance)}</p>
                   </div>
-
                   <div className="bg-card border border-border rounded-xl p-5 neon-card text-center">
-                    <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-3">
-                      <ArrowDownLeft className="w-6 h-6 text-secondary" />
-                    </div>
+                    <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-3"><ArrowDownLeft className="w-6 h-6 text-secondary" /></div>
                     <p className="text-xs text-muted-foreground mb-1">Tổng nạp thành công</p>
                     <p className="font-display text-xl font-bold text-secondary neon-cyan-text">{formatVND(totalTopup)}</p>
                   </div>
-
                   <div className="bg-card border border-border rounded-xl p-5 neon-card text-center">
-                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3">
-                      <ArrowUpRight className="w-6 h-6 text-accent" />
-                    </div>
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3"><ArrowUpRight className="w-6 h-6 text-accent" /></div>
                     <p className="text-xs text-muted-foreground mb-1">Tổng chi tiêu</p>
                     <p className="font-display text-xl font-bold text-accent">{formatVND(totalSpent)}</p>
                   </div>
                 </div>
 
-                {/* Balance timeline */}
                 <div className="bg-card border border-border rounded-xl p-6 neon-card">
                   <div className="flex items-center gap-2 mb-4">
                     <TrendingUp className="w-5 h-5 text-primary" />
                     <h3 className="font-bold text-foreground">Biến động gần đây</h3>
                   </div>
-
                   {balanceEvents.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-6">Chưa có biến động nào.</p>
                   ) : (
                     <div className="space-y-0">
                       {balanceEvents.map((event) => (
-                        <div
-                          key={event.id}
-                          className="flex items-center justify-between py-3 border-b border-border last:border-0"
-                        >
+                        <div key={event.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
                           <div className="flex items-center gap-3">
-                            {event.type === "topup" ? (
-                              <ArrowDownLeft className="w-4 h-4 text-primary" />
-                            ) : (
-                              <ArrowUpRight className="w-4 h-4 text-destructive" />
-                            )}
+                            {event.type === "topup" ? <ArrowDownLeft className="w-4 h-4 text-primary" /> : <ArrowUpRight className="w-4 h-4 text-destructive" />}
                             <div>
                               <p className="text-sm text-foreground">{event.label}</p>
-                              <p className="text-[10px] text-muted-foreground">
-                                {new Date(event.date).toLocaleString("vi-VN")}
-                              </p>
+                              <p className="text-[10px] text-muted-foreground">{new Date(event.date).toLocaleString("vi-VN")}</p>
                             </div>
                           </div>
-                          <span
-                            className={`font-bold text-sm ${
-                              event.type === "topup" ? "text-primary" : "text-destructive"
-                            }`}
-                          >
+                          <span className={`font-bold text-sm ${event.type === "topup" ? "text-primary" : "text-destructive"}`}>
                             {event.type === "topup" ? `+${formatVND(event.amount)}` : `-${formatVND(event.amount)}`}
                           </span>
                         </div>
@@ -373,7 +284,6 @@ const History = () => {
           </>
         )}
       </main>
-
       <Footer />
     </div>
   );
