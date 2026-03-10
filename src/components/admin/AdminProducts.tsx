@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Package } from "lucide-react";
 
 type Product = {
   id: string;
@@ -12,26 +12,33 @@ type Product = {
   status: string;
 };
 
-const categories = ["Blox Fruits", "Random", "Robux", "Gamepass", "Khác"];
+type Category = { id: string; name: string; slug: string };
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
-  const [form, setForm] = useState({ name: "", description: "", price: 0, stock: 0, category: "Blox Fruits", status: "active", account_info: "" });
+  const [form, setForm] = useState({ name: "", description: "", price: 0, category: "Blox Fruits", status: "active" });
+  const [accountLines, setAccountLines] = useState("");
 
-  const fetchProducts = async () => {
+  const fetchData = async () => {
     setLoading(true);
-    const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
-    setProducts(data || []);
+    const [prodRes, catRes] = await Promise.all([
+      supabase.from("products").select("*").order("created_at", { ascending: false }),
+      supabase.from("categories").select("*").order("sort_order"),
+    ]);
+    setProducts(prodRes.data || []);
+    setCategories((catRes.data as Category[]) || []);
     setLoading(false);
   };
 
-  useEffect(() => { fetchProducts(); }, []);
+  useEffect(() => { fetchData(); }, []);
 
   const resetForm = () => {
-    setForm({ name: "", description: "", price: 0, stock: 0, category: "Blox Fruits", status: "active", account_info: "" });
+    setForm({ name: "", description: "", price: 0, category: categories[0]?.name || "Blox Fruits", status: "active" });
+    setAccountLines("");
     setEditing(null);
     setShowForm(false);
   };
@@ -39,16 +46,48 @@ const AdminProducts = () => {
   const handleSave = async () => {
     if (!form.name) return;
     if (editing) {
-      await supabase.from("products").update(form).eq("id", editing.id);
+      await supabase.from("products").update({
+        name: form.name, description: form.description, price: form.price,
+        category: form.category, status: form.status,
+      }).eq("id", editing.id);
+
+      // If new account lines provided, add them
+      if (accountLines.trim()) {
+        const lines = accountLines.split("\n").filter(l => l.trim());
+        if (lines.length > 0) {
+          await supabase.from("product_accounts").insert(
+            lines.map(line => ({ product_id: editing.id, account_info: line.trim() })) as any
+          );
+          // Update stock
+          const { count } = await supabase.from("product_accounts")
+            .select("*", { count: "exact", head: true })
+            .eq("product_id", editing.id).eq("is_sold", false);
+          await supabase.from("products").update({ stock: count || 0 }).eq("id", editing.id);
+        }
+      }
     } else {
-      await supabase.from("products").insert(form);
+      const { data: newProduct } = await supabase.from("products").insert({
+        name: form.name, description: form.description, price: form.price,
+        category: form.category, status: form.status, stock: 0,
+      }).select().single();
+
+      if (newProduct && accountLines.trim()) {
+        const lines = accountLines.split("\n").filter(l => l.trim());
+        if (lines.length > 0) {
+          await supabase.from("product_accounts").insert(
+            lines.map(line => ({ product_id: newProduct.id, account_info: line.trim() })) as any
+          );
+          await supabase.from("products").update({ stock: lines.length }).eq("id", newProduct.id);
+        }
+      }
     }
     resetForm();
-    fetchProducts();
+    fetchData();
   };
 
-  const handleEdit = (p: Product) => {
-    setForm({ name: p.name, description: p.description || "", price: p.price, stock: p.stock, category: p.category, status: p.status, account_info: (p as any).account_info || "" });
+  const handleEdit = async (p: Product) => {
+    setForm({ name: p.name, description: p.description || "", price: p.price, category: p.category, status: p.status });
+    setAccountLines("");
     setEditing(p);
     setShowForm(true);
   };
@@ -56,7 +95,7 @@ const AdminProducts = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Xoá sản phẩm này?")) return;
     await supabase.from("products").delete().eq("id", id);
-    fetchProducts();
+    fetchData();
   };
 
   const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
@@ -79,59 +118,50 @@ const AdminProducts = () => {
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-foreground mb-1 block">Tên sản phẩm</label>
-              <input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm"
-              />
+              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm" />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground mb-1 block">Danh mục</label>
-              <select
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm"
-              >
-                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm">
+                {categories.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
             </div>
             <div>
               <label className="text-sm font-medium text-foreground mb-1 block">Giá (VNĐ)</label>
-              <input
-                type="number"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm"
-              />
+              <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm" />
             </div>
             <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Kho hàng</label>
-              <input
-                type="number"
-                value={form.stock}
-                onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm"
-              />
+              <label className="text-sm font-medium text-foreground mb-1 block">Trạng thái</label>
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}
+                className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm">
+                <option value="active">Đang bán</option>
+                <option value="inactive">Ẩn</option>
+              </select>
             </div>
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1 block">Mô tả</label>
-            <textarea
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={2}
-              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm resize-none"
-            />
+            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2}
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm resize-none" />
           </div>
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Thông tin tài khoản (hiện sau khi mua)</label>
+            <label className="text-sm font-medium text-foreground mb-1 block">
+              <Package className="w-4 h-4 inline mr-1" />
+              Thêm tài khoản (mỗi dòng = 1 tài khoản riêng)
+            </label>
             <textarea
-              value={form.account_info}
-              onChange={(e) => setForm({ ...form, account_info: e.target.value })}
-              rows={3}
-              placeholder="VD: Username: abc123&#10;Password: xyz789&#10;Cookie: ..."
-              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary focus:neon-border transition-all text-sm resize-none font-mono"
+              value={accountLines}
+              onChange={(e) => setAccountLines(e.target.value)}
+              rows={5}
+              placeholder={"VD:\nuser1:pass1\nuser2:pass2\nuser3:pass3"}
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm resize-none font-mono"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              {accountLines.split("\n").filter(l => l.trim()).length} tài khoản sẽ được thêm vào kho
+            </p>
           </div>
           <div className="flex gap-2">
             <button onClick={handleSave} className="px-6 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
@@ -167,7 +197,11 @@ const AdminProducts = () => {
                     <td className="px-4 py-3 text-foreground font-medium max-w-[250px] truncate">{p.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{p.category}</td>
                     <td className="px-4 py-3 text-primary font-mono font-bold">{formatVND(p.price)}</td>
-                    <td className="px-4 py-3 text-foreground">{p.stock}</td>
+                    <td className="px-4 py-3 text-foreground">
+                      <span className={p.stock === 0 ? "text-destructive font-bold" : ""}>
+                        {p.stock === 0 ? "Hết hàng" : p.stock}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button onClick={() => handleEdit(p)} className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">

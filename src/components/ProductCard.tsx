@@ -22,20 +22,17 @@ interface ProductCardProps {
   stock: number;
   description: string;
   category: string;
-  accountInfo?: string;
 }
 
-const ProductCard = ({ id, name, price, numericPrice, stock, description, category, accountInfo }: ProductCardProps) => {
+const ProductCard = ({ id, name, price, numericPrice, stock, description, category }: ProductCardProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [buying, setBuying] = useState(false);
   const [showAccDialog, setShowAccDialog] = useState(false);
   const [purchasedAccInfo, setPurchasedAccInfo] = useState("");
+  const [purchasedOrderCode, setPurchasedOrderCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const parsePrice = (p: string): number => parseInt(p.replace(/[^\d]/g, ""), 10) || 0;
-  const finalPrice = numericPrice ?? parsePrice(price);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(purchasedAccInfo);
@@ -48,43 +45,40 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
       toast({ title: "Vui lòng đăng nhập", variant: "destructive" });
       return;
     }
+    if (!id) {
+      toast({ title: "Lỗi sản phẩm", variant: "destructive" });
+      return;
+    }
     if (stock <= 0) {
       toast({ title: "Hết hàng", variant: "destructive" });
       return;
     }
     setBuying(true);
 
-    const { data: profile } = await supabase.from("profiles").select("balance").eq("user_id", user.id).single();
-    if (!profile || profile.balance < finalPrice) {
-      setBuying(false);
-      toast({ title: "❌ Số dư không đủ", description: "Vui lòng nạp thêm!", variant: "destructive" });
-      return;
-    }
+    const { data, error } = await supabase.rpc("purchase_product", {
+      p_user_id: user.id,
+      p_product_id: id,
+    });
 
-    const { error: balanceError } = await supabase.from("profiles").update({ balance: profile.balance - finalPrice }).eq("user_id", user.id);
-    if (balanceError) { setBuying(false); toast({ title: "Lỗi", variant: "destructive" }); return; }
-
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const orderCode = "VAK" + Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-
-    const { error: orderError } = await supabase.from("orders").insert({
-      user_id: user.id, product_name: name, product_category: category,
-      price: finalPrice, account_info: accountInfo || null, order_code: orderCode,
-    } as any);
-
-    if (orderError) {
-      await supabase.from("profiles").update({ balance: profile.balance }).eq("user_id", user.id);
-      setBuying(false);
-      toast({ title: "Lỗi", description: "Đã hoàn tiền.", variant: "destructive" });
-      return;
-    }
     setBuying(false);
 
-    if (accountInfo) {
-      setPurchasedAccInfo(accountInfo);
+    if (error) {
+      toast({ title: "Lỗi", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    const result = data as any;
+    if (!result.success) {
+      toast({ title: "❌ " + result.error, variant: "destructive" });
+      return;
+    }
+
+    if (result.account_info) {
+      setPurchasedAccInfo(result.account_info);
+      setPurchasedOrderCode(result.order_code);
       setShowAccDialog(true);
     } else {
-      toast({ title: "✅ Mua hàng thành công!", description: `Mã đơn: ${orderCode}` });
+      toast({ title: "✅ Mua hàng thành công!", description: `Mã đơn: ${result.order_code}` });
       window.location.href = "/lich-su?tab=orders";
     }
   };
@@ -96,7 +90,9 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
           <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">{category}</span>
           <div className="flex items-center gap-1">
             <Package className="w-3.5 h-3.5 text-primary-foreground" />
-            <span className="text-xs font-bold text-primary-foreground">Kho: {stock}</span>
+            <span className="text-xs font-bold text-primary-foreground">
+              {stock > 0 ? `Kho: ${stock}` : "Hết hàng"}
+            </span>
           </div>
         </div>
 
@@ -127,7 +123,6 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         </div>
       </div>
 
-      {/* Confirm dialog */}
       <PurchaseConfirmDialog
         open={showConfirm}
         onOpenChange={setShowConfirm}
@@ -137,7 +132,6 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
         buying={buying}
       />
 
-      {/* Account Info Dialog */}
       <Dialog open={showAccDialog} onOpenChange={(open) => {
         if (!open) { setShowAccDialog(false); window.location.href = "/lich-su?tab=orders"; }
       }}>
@@ -152,6 +146,10 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
               <p className="text-sm text-foreground font-medium">{name}</p>
             </div>
             <div className="bg-muted border border-border rounded-lg p-4">
+              <p className="text-xs text-muted-foreground mb-1 font-semibold">Mã đơn:</p>
+              <p className="text-sm text-primary font-mono font-bold">{purchasedOrderCode}</p>
+            </div>
+            <div className="bg-muted border border-border rounded-lg p-4">
               <p className="text-xs text-muted-foreground mb-1 font-semibold">Thông tin tài khoản:</p>
               <pre className="text-sm text-foreground font-mono whitespace-pre-wrap break-all">{purchasedAccInfo}</pre>
             </div>
@@ -163,7 +161,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
             </button>
             <button onClick={() => { setShowAccDialog(false); window.location.href = "/lich-su?tab=orders"; }}
               className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm font-semibold hover:bg-border transition-colors">
-              Đến lịch sử đơn hàng
+              Đến lịch sử
             </button>
           </DialogFooter>
         </DialogContent>

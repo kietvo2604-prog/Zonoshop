@@ -6,6 +6,8 @@ import CategoryTabs from "@/components/CategoryTabs";
 import ProductSection from "@/components/ProductSection";
 import PolicySection from "@/components/PolicySection";
 import TopUpGuide from "@/components/TopUpGuide";
+import TopUpLeaderboard from "@/components/TopUpLeaderboard";
+import RecentPurchases from "@/components/RecentPurchases";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
@@ -17,36 +19,38 @@ interface Product {
   stock: number;
   description: string | null;
   category: string;
-  account_info: string | null;
 }
+
+type Category = { id: string; name: string; slug: string };
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await supabase.from("products").select("*").eq("status", "active").order("created_at", { ascending: false });
-      setProducts((data as Product[]) || []);
+    const fetchData = async () => {
+      const [prodRes, catRes] = await Promise.all([
+        supabase.from("products").select("*").eq("status", "active").order("created_at", { ascending: false }),
+        supabase.from("categories").select("*").order("sort_order"),
+      ]);
+      setProducts((prodRes.data as Product[]) || []);
+      setCategories((catRes.data as Category[]) || []);
       setLoading(false);
     };
-    fetchProducts();
+    fetchData();
   }, []);
+
+  // Build slug map from categories
+  const slugMap: Record<string, string> = {};
+  categories.forEach(c => { slugMap[c.name] = c.slug; });
 
   const grouped: Record<string, Product[]> = {};
   products.forEach((p) => {
     if (!grouped[p.category]) grouped[p.category] = [];
     grouped[p.category].push(p);
   });
-
-  const categoryMap: Record<string, string> = {
-    "Blox Fruits": "bloxfruits",
-    "Random": "random",
-    "Robux": "robux",
-    "Gamepass": "gamepass",
-    "Khác": "other",
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,6 +59,10 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-6 space-y-8">
         <AnnouncementBanner />
+
+        {/* Leaderboard */}
+        <TopUpLeaderboard />
+
         <CategoryTabs activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
         {loading ? (
@@ -65,8 +73,8 @@ const Index = () => {
           <div className="text-center py-16 text-muted-foreground">Chưa có sản phẩm nào.</div>
         ) : (
           Object.entries(grouped).map(([category, prods]) => {
-            const catKey = categoryMap[category] || category.toLowerCase();
-            if (activeCategory !== "all" && activeCategory !== catKey) return null;
+            const catSlug = slugMap[category] || category.toLowerCase().replace(/\s+/g, "");
+            if (activeCategory !== "all" && activeCategory !== catSlug) return null;
             return (
               <ProductSection
                 key={category}
@@ -79,12 +87,14 @@ const Index = () => {
                   stock: p.stock,
                   description: p.description || "",
                   category: p.category,
-                  accountInfo: p.account_info || undefined,
                 }))}
               />
             );
           })
         )}
+
+        {/* Recent purchases */}
+        <RecentPurchases />
 
         <div className="grid lg:grid-cols-2 gap-8">
           <PolicySection />
