@@ -7,7 +7,8 @@ import AnimatedLogo from "./AnimatedLogo";
 
 const Header = () => {
   const { user, signOut } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
+  const location = useLocation();
+  const currentPath = location.pathname;
   const [historyOpen, setHistoryOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
