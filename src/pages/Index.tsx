@@ -69,6 +69,20 @@ const Index = () => {
         {/* Leaderboard */}
         <TopUpLeaderboard />
 
+        {/* Search */}
+        <div className="relative max-w-md">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="🔍 Tìm kiếm sản phẩm..."
+            className="w-full bg-muted border border-border rounded-lg py-2.5 pl-4 pr-10 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all text-sm"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">✕</button>
+          )}
+        </div>
+
         <CategoryTabs activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
         {loading ? (
