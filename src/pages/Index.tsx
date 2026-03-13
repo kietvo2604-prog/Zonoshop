@@ -127,8 +127,7 @@ const Index = () => {
           })
         )}
 
-        {/* Recent purchases */}
-        <RecentPurchases />
+        {/* Removed duplicate RecentPurchases - now shown above */}
 
         <div className="grid lg:grid-cols-2 gap-8">
           <PolicySection />
