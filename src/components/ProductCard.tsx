@@ -32,16 +32,8 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
   const [showAccDialog, setShowAccDialog] = useState(false);
   const [purchasedAccInfos, setPurchasedAccInfos] = useState<string[]>([]);
   const [purchasedOrderCode, setPurchasedOrderCode] = useState("");
-  const [copied, setCopied] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [purchasedOrderId, setPurchasedOrderId] = useState("");
-
-  const handleCopy = async () => {
-    const text = purchasedAccInfos.join("\n");
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const handleBuy = async (quantity: number, discountCode?: string) => {
     if (!user) {
