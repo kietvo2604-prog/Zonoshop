@@ -17,7 +17,9 @@ import ProductDetail from "./pages/ProductDetail";
 import FAQ from "./pages/FAQ";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import CardRegulations from "./pages/CardRegulations";
 import ClickSparkle from "./components/ClickSparkle";
+import TopupNotifier from "./components/TopupNotifier";
 
 const queryClient = new QueryClient();
 
