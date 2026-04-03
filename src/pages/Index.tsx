@@ -5,7 +5,6 @@ import Header from "@/components/Header";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import CategoryTabs from "@/components/CategoryTabs";
 import ProductSection from "@/components/ProductSection";
-import PolicySection from "@/components/PolicySection";
 import TopUpGuide from "@/components/TopUpGuide";
 import RecentPurchases from "@/components/RecentPurchases";
 import RecentTopups from "@/components/RecentTopups";
@@ -53,11 +52,9 @@ const Index = () => {
     fetchData();
   }, []);
 
-  // Build slug map from categories
   const slugMap: Record<string, string> = {};
   categories.forEach(c => { slugMap[c.name] = c.slug; });
 
-  // Filter by search
   const filtered = searchQuery.trim()
     ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()))
     : products;
@@ -76,8 +73,6 @@ const Index = () => {
       <main className="container mx-auto px-4 py-6 space-y-8">
         <AnnouncementBanner />
 
-
-        {/* Search */}
         <div className="relative max-w-md">
           <input
             type="text"
@@ -124,16 +119,12 @@ const Index = () => {
           })
         )}
 
-        {/* Recent activity */}
         <div className="grid md:grid-cols-2 gap-6">
           <RecentPurchases />
           <RecentTopups />
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          <PolicySection />
-          <TopUpGuide />
-        </div>
+        <TopUpGuide />
       </main>
 
       <Footer />

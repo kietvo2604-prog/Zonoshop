@@ -10,13 +10,13 @@ const TopBar = () => {
           </p>
         </div>
         <div className="hidden md:flex items-center gap-6 text-accent-foreground shrink-0 ml-4">
-          <a href="#policy" className="flex items-center gap-1 hover:underline">
+          <a href="/chinh-sach-bao-hanh" className="flex items-center gap-1 hover:underline">
             <Shield className="w-3.5 h-3.5" /> Chính sách
           </a>
           <a href="/faq" className="flex items-center gap-1 hover:underline">
             <HelpCircle className="w-3.5 h-3.5" /> FAQ
           </a>
-          <a href="#contact" className="flex items-center gap-1 hover:underline">
+          <a href="https://discord.gg/shopkietz" target="_blank" rel="noopener" className="flex items-center gap-1 hover:underline">
             <Phone className="w-3.5 h-3.5" /> Liên hệ
           </a>
         </div>

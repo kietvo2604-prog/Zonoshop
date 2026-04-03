@@ -18,6 +18,8 @@ import FAQ from "./pages/FAQ";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import CardRegulations from "./pages/CardRegulations";
+import WarrantyPolicy from "./pages/WarrantyPolicy";
+import CTVDashboard from "./pages/CTVDashboard";
 import ClickSparkle from "./components/ClickSparkle";
 import TopupNotifier from "./components/TopupNotifier";
 
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/trang-ca-nhan" element={<Profile />} />
             <Route path="/quy-dinh-nap-the" element={<CardRegulations />} />
+            <Route path="/chinh-sach-bao-hanh" element={<WarrantyPolicy />} />
+            <Route path="/ctv" element={<CTVDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
