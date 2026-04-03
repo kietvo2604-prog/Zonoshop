@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clock, CheckCircle, XCircle, Loader2, AlertCircle, Wallet } from "lucide-react";
+import { Loader2, AlertCircle, Wallet, Search, Trash2 } from "lucide-react";
 
 type TopupRequest = {
   id: string;
@@ -13,6 +13,8 @@ type TopupRequest = {
   status: string;
   note: string | null;
   created_at: string;
+  updated_at: string;
+  card_result: string | null;
 };
 
 const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
@@ -21,6 +23,8 @@ const TopUpHistory = () => {
   const { user, loading: authLoading } = useAuth();
   const [topups, setTopups] = useState<TopupRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [perPage, setPerPage] = useState(10);
+  const [filterStatus, setFilterStatus] = useState("all");
 
   useEffect(() => {
     if (!user) return;
@@ -32,19 +36,6 @@ const TopUpHistory = () => {
     };
     fetchTopups();
   }, [user]);
-
-  const statusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-accent/10 border-accent/30 text-accent"><Clock className="w-3 h-3" /> Chờ xử lý</span>;
-      case "approved":
-        return <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-primary/10 border-primary/30 text-primary"><CheckCircle className="w-3 h-3" /> Đã duyệt</span>;
-      case "rejected":
-        return <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-destructive/10 border-destructive/30 text-destructive"><XCircle className="w-3 h-3" /> Từ chối</span>;
-      default:
-        return null;
-    }
-  };
 
   if (authLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
@@ -62,46 +53,105 @@ const TopUpHistory = () => {
     );
   }
 
+  let filtered = topups;
+  if (filterStatus !== "all") filtered = filtered.filter(t => t.status === filterStatus);
+  const displayed = filtered.slice(0, perPage);
+
+  const totalApproved = topups.filter(t => t.status === "approved").reduce((s, t) => s + t.amount, 0);
+  const totalPending = topups.filter(t => t.status === "pending").reduce((s, t) => s + t.amount, 0);
+
+  const statusText = (s: string) => {
+    switch(s) {
+      case "approved": return <span className="text-primary font-bold">Thành công</span>;
+      case "rejected": return <span className="text-destructive font-bold">Thất bại</span>;
+      case "pending": return <span className="text-neon-orange font-bold">Chờ xử lý</span>;
+      default: return <span>{s}</span>;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <TopBar /><Header />
-      <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-primary neon-text text-center">LỊCH SỬ NẠP TIỀN</h1>
-        <p className="text-center text-muted-foreground text-sm">Theo dõi tất cả các giao dịch nạp tiền</p>
+      <main className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+        <div className="bg-gradient-to-r from-destructive to-neon-orange rounded-xl p-4">
+          <h1 className="font-display text-lg md:text-xl font-bold text-white flex items-center gap-2">
+            <Wallet className="w-6 h-6" /> LỊCH SỬ NẠP THẺ
+          </h1>
+        </div>
 
-        {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
-        ) : topups.length === 0 ? (
-          <div className="bg-card border border-border rounded-xl p-10 text-center">
-            <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">Chưa có hoạt động nạp tiền nào.</p>
+        <div className="bg-card border border-border rounded-xl p-4 space-y-4">
+          <div className="flex flex-wrap gap-3">
+            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
+              className="bg-muted border border-border rounded-lg py-2 px-3 text-sm text-foreground focus:outline-none focus:border-primary">
+              <option value="all">Trạng thái</option>
+              <option value="approved">Thành công</option>
+              <option value="pending">Chờ xử lý</option>
+              <option value="rejected">Thất bại</option>
+            </select>
+            <button onClick={() => {}} className="flex items-center gap-1.5 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90">
+              <Search className="w-4 h-4" /> Tìm kiếm
+            </button>
+            <button onClick={() => setFilterStatus("all")} className="flex items-center gap-1.5 px-4 py-2 bg-muted text-muted-foreground border border-border rounded-lg text-sm font-semibold hover:bg-border">
+              <Trash2 className="w-4 h-4" /> Bỏ lọc
+            </button>
           </div>
-        ) : (
-          <div className="space-y-3 animate-slide-up">
-            {topups.map((t) => (
-              <div key={t.id} className={`bg-card border rounded-xl p-4 neon-card flex items-center justify-between gap-4 ${t.status === "approved" ? "border-primary/30" : t.status === "rejected" ? "border-destructive/30" : "border-border"}`}>
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${t.status === "approved" ? "bg-primary/10" : t.status === "rejected" ? "bg-destructive/10" : "bg-accent/10"}`}>
-                    {t.status === "approved" ? <CheckCircle className="w-5 h-5 text-primary" /> : t.status === "rejected" ? <XCircle className="w-5 h-5 text-destructive" /> : <Clock className="w-5 h-5 text-accent" />}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-foreground text-sm">{t.method}</p>
-                    {t.note && <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[200px] md:max-w-[350px]">{t.note}</p>}
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                      <Clock className="w-3 h-3" />{new Date(t.created_at).toLocaleString("vi-VN")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className={`font-bold text-sm ${t.status === "approved" ? "text-primary" : t.status === "rejected" ? "text-destructive line-through" : "text-accent"}`}>
-                    {t.status === "rejected" ? "" : "+"}{formatVND(t.amount)}
-                  </p>
-                  {statusBadge(t.status)}
-                </div>
-              </div>
-            ))}
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              SHOW: <select value={perPage} onChange={e => setPerPage(Number(e.target.value))} className="bg-muted border border-border rounded px-2 py-1 text-foreground text-sm">
+                <option value={10}>10</option><option value={25}>25</option><option value={50}>50</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              SHORT BY DATE: <select className="bg-muted border border-border rounded px-2 py-1 text-foreground text-sm">
+                <option value="all">Tất cả</option>
+              </select>
+            </div>
           </div>
-        )}
+
+          {loading ? (
+            <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Phương thức</th>
+                    <th className="text-right px-3 py-2.5 font-semibold text-foreground italic">Mệnh giá</th>
+                    <th className="text-right px-3 py-2.5 font-semibold text-foreground italic">Thực nhận</th>
+                    <th className="text-center px-3 py-2.5 font-semibold text-foreground italic">Trạng thái</th>
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Ngày tạo</th>
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Ngày cập nhật</th>
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Lý do</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayed.length === 0 ? (
+                    <tr><td colSpan={7} className="text-center py-8 text-muted-foreground">Chưa có dữ liệu.</td></tr>
+                  ) : displayed.map(t => (
+                    <tr key={t.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                      <td className="px-3 py-2.5 text-foreground">{t.method}</td>
+                      <td className="px-3 py-2.5 text-right font-mono text-foreground">{formatVND(t.amount)}</td>
+                      <td className="px-3 py-2.5 text-right font-mono text-primary font-bold">{t.status === "approved" ? formatVND(t.amount) : "—"}</td>
+                      <td className="px-3 py-2.5 text-center text-xs">{statusText(t.status)}</td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">{new Date(t.created_at).toLocaleString("vi-VN")}</td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">{new Date(t.updated_at).toLocaleString("vi-VN")}</td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground max-w-[150px] truncate">{t.note || t.card_result || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-muted-foreground">
+              Đã thanh toán: <span className="text-primary font-bold">{formatVND(totalApproved)}</span> | 
+              Chưa thanh toán: <span className="text-destructive font-bold">{formatVND(totalPending)}</span>
+            </p>
+            <p className="text-muted-foreground">Showing {perPage} of {filtered.length} Results</p>
+          </div>
+        </div>
       </main>
       <Footer />
     </div>

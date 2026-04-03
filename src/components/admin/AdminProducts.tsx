@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, Package, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 
 type Product = {
   id: string;
@@ -12,7 +12,23 @@ type Product = {
   status: string;
 };
 
+type ProductAccount = {
+  id: string;
+  account_info: string;
+  is_sold: boolean;
+  created_at: string;
+};
+
 type Category = { id: string; name: string; slug: string };
+
+const maskPassword = (info: string) => {
+  // Format: user:pass or user:pass:extra
+  const parts = info.split(":");
+  if (parts.length >= 2) {
+    return parts[0] + ":" + "••••••••" + (parts.length > 2 ? ":" + parts.slice(2).map(() => "••••").join(":") : "");
+  }
+  return info;
+};
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,6 +38,10 @@ const AdminProducts = () => {
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState({ name: "", description: "", price: 0, category: "Blox Fruits", status: "active" });
   const [accountLines, setAccountLines] = useState("");
+  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+  const [productAccounts, setProductAccounts] = useState<ProductAccount[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState(false);
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
 
   const fetchData = async () => {
     setLoading(true);
@@ -35,6 +55,35 @@ const AdminProducts = () => {
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  const fetchAccounts = async (productId: string) => {
+    setLoadingAccounts(true);
+    const { data } = await supabase.from("product_accounts").select("*").eq("product_id", productId).order("created_at", { ascending: false });
+    setProductAccounts((data as ProductAccount[]) || []);
+    setLoadingAccounts(false);
+  };
+
+  const toggleExpand = async (productId: string) => {
+    if (expandedProduct === productId) {
+      setExpandedProduct(null);
+      setProductAccounts([]);
+    } else {
+      setExpandedProduct(productId);
+      await fetchAccounts(productId);
+    }
+  };
+
+  const handleDeleteAccount = async (accountId: string, productId: string) => {
+    if (!confirm("Xoá tài khoản này khỏi kho?")) return;
+    await supabase.from("product_accounts").delete().eq("id", accountId);
+    // Update stock
+    const { count } = await supabase.from("product_accounts")
+      .select("*", { count: "exact", head: true })
+      .eq("product_id", productId).eq("is_sold", false);
+    await supabase.from("products").update({ stock: count || 0 }).eq("id", productId);
+    await fetchAccounts(productId);
+    fetchData();
+  };
 
   const resetForm = () => {
     setForm({ name: "", description: "", price: 0, category: categories[0]?.name || "Blox Fruits", status: "active" });
@@ -51,14 +100,12 @@ const AdminProducts = () => {
         category: form.category, status: form.status,
       }).eq("id", editing.id);
 
-      // If new account lines provided, add them
       if (accountLines.trim()) {
         const lines = accountLines.split("\n").filter(l => l.trim());
         if (lines.length > 0) {
           await supabase.from("product_accounts").insert(
             lines.map(line => ({ product_id: editing.id, account_info: line.trim() })) as any
           );
-          // Update stock
           const { count } = await supabase.from("product_accounts")
             .select("*", { count: "exact", head: true })
             .eq("product_id", editing.id).eq("is_sold", false);
@@ -85,7 +132,7 @@ const AdminProducts = () => {
     fetchData();
   };
 
-  const handleEdit = async (p: Product) => {
+  const handleEdit = (p: Product) => {
     setForm({ name: p.name, description: p.description || "", price: p.price, category: p.category, status: p.status });
     setAccountLines("");
     setEditing(p);
@@ -104,10 +151,8 @@ const AdminProducts = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-primary neon-text">QUẢN LÝ SẢN PHẨM</h1>
-        <button
-          onClick={() => { resetForm(); setShowForm(true); }}
-          className="flex items-center gap-2 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
-        >
+        <button onClick={() => { resetForm(); setShowForm(true); }}
+          className="flex items-center gap-2 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
           <Plus className="w-4 h-4" /> Thêm sản phẩm
         </button>
       </div>
@@ -149,27 +194,18 @@ const AdminProducts = () => {
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1 block">
-              <Package className="w-4 h-4 inline mr-1" />
-              Thêm tài khoản (mỗi dòng = 1 tài khoản riêng)
+              <Package className="w-4 h-4 inline mr-1" /> Thêm tài khoản (mỗi dòng = 1 tài khoản riêng)
             </label>
-            <textarea
-              value={accountLines}
-              onChange={(e) => setAccountLines(e.target.value)}
-              rows={5}
+            <textarea value={accountLines} onChange={(e) => setAccountLines(e.target.value)} rows={5}
               placeholder={"VD:\nuser1:pass1\nuser2:pass2\nuser3:pass3"}
-              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm resize-none font-mono"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {accountLines.split("\n").filter(l => l.trim()).length} tài khoản sẽ được thêm vào kho
-            </p>
+              className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm resize-none font-mono" />
+            <p className="text-xs text-muted-foreground mt-1">{accountLines.split("\n").filter(l => l.trim()).length} tài khoản sẽ được thêm vào kho</p>
           </div>
           <div className="flex gap-2">
             <button onClick={handleSave} className="px-6 py-2.5 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
               {editing ? "Cập nhật" : "Thêm"}
             </button>
-            <button onClick={resetForm} className="px-6 py-2.5 bg-muted text-muted-foreground rounded-lg text-sm font-semibold hover:bg-border transition-colors">
-              Huỷ
-            </button>
+            <button onClick={resetForm} className="px-6 py-2.5 bg-muted text-muted-foreground rounded-lg text-sm font-semibold hover:bg-border transition-colors">Huỷ</button>
           </div>
         </div>
       )}
@@ -191,19 +227,20 @@ const AdminProducts = () => {
                 <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Đang tải...</td></tr>
               ) : products.length === 0 ? (
                 <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Chưa có sản phẩm</td></tr>
-              ) : (
-                products.map((p) => (
+              ) : products.map((p) => (
+                <>
                   <tr key={p.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3 text-foreground font-medium max-w-[250px] truncate">{p.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{p.category}</td>
                     <td className="px-4 py-3 text-primary font-mono font-bold">{formatVND(p.price)}</td>
                     <td className="px-4 py-3 text-foreground">
-                      <span className={p.stock === 0 ? "text-destructive font-bold" : ""}>
-                        {p.stock === 0 ? "Hết hàng" : p.stock}
-                      </span>
+                      <span className={p.stock === 0 ? "text-destructive font-bold" : ""}>{p.stock === 0 ? "Hết hàng" : p.stock}</span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => toggleExpand(p.id)} className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground" title="Xem tài khoản">
+                          {expandedProduct === p.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </button>
                         <button onClick={() => handleEdit(p)} className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
                           <Pencil className="w-4 h-4" />
                         </button>
@@ -213,8 +250,51 @@ const AdminProducts = () => {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                  {expandedProduct === p.id && (
+                    <tr key={`${p.id}-accounts`}>
+                      <td colSpan={5} className="bg-muted/20 px-4 py-3">
+                        <div className="space-y-2">
+                          <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                            <Package className="w-4 h-4 text-primary" /> Danh sách tài khoản ({productAccounts.length})
+                          </h4>
+                          {loadingAccounts ? (
+                            <p className="text-xs text-muted-foreground">Đang tải...</p>
+                          ) : productAccounts.length === 0 ? (
+                            <p className="text-xs text-muted-foreground">Chưa có tài khoản nào.</p>
+                          ) : (
+                            <div className="max-h-60 overflow-y-auto space-y-1">
+                              {productAccounts.map(acc => (
+                                <div key={acc.id} className="flex items-center justify-between bg-card border border-border rounded-lg px-3 py-2">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${acc.is_sold ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}>
+                                      {acc.is_sold ? "Đã bán" : "Còn"}
+                                    </span>
+                                    <span className="text-xs font-mono text-foreground truncate">
+                                      {showPasswords[acc.id] ? acc.account_info : maskPassword(acc.account_info)}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    <button onClick={() => setShowPasswords(prev => ({ ...prev, [acc.id]: !prev[acc.id] }))}
+                                      className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground" title="Hiện/ẩn mật khẩu">
+                                      {showPasswords[acc.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                    </button>
+                                    {!acc.is_sold && (
+                                      <button onClick={() => handleDeleteAccount(acc.id, p.id)}
+                                        className="p-1 rounded hover:bg-muted transition-colors text-destructive" title="Xoá">
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              ))}
             </tbody>
           </table>
         </div>

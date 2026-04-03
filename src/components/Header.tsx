@@ -6,8 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import ThemeToggle from "./ThemeToggle";
 import AnimatedLogo from "./AnimatedLogo";
 
-type Category = { id: string; name: string; slug: string; image_url: string | null };
-
 const Header = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
@@ -17,17 +15,7 @@ const Header = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLElement>(null);
-  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    supabase.from("categories").select("*").order("sort_order").then(({ data }) => {
-      setCategories((data as Category[]) || []);
-    });
-  }, []);
 
   useEffect(() => {
     if (!user) { setIsAdmin(false); setBalance(null); return; }
@@ -42,7 +30,6 @@ const Header = () => {
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
-      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpenDropdown(null);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -53,46 +40,15 @@ const Header = () => {
     if (searchQuery.trim()) navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
   };
 
-  const handleDropdownEnter = (name: string) => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    setOpenDropdown(name);
-  };
-
-  const handleDropdownLeave = () => {
-    hoverTimeout.current = setTimeout(() => setOpenDropdown(null), 200);
-  };
-
   const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
-
-  // Build nav items dynamically
-  const productChildren = [
-    { name: "Tất cả sản phẩm", href: "/", icon: <Package className="w-4 h-4" /> },
-    ...categories.map(c => ({
-      name: c.name,
-      href: `/?cat=${c.slug}`,
-      icon: c.image_url ? <img src={c.image_url} alt={c.name} className="w-4 h-4 rounded object-contain" /> : <Package className="w-4 h-4" />,
-    })),
-    { name: "Đơn hàng của tôi", href: "/lich-su-mua", icon: <ShoppingCart className="w-4 h-4" /> },
-  ];
 
   const navItems = [
     { name: "Trang chủ", href: "/", match: "/", icon: <Home className="w-4 h-4" /> },
-    { name: "Sản phẩm", href: "/", match: "/#products", icon: <Package className="w-4 h-4" />, children: productChildren },
-    {
-      name: "Nạp tiền", href: "/nap-tien", match: "/nap-tien", icon: <CreditCard className="w-4 h-4" />,
-      children: [
-        { name: "Nạp thẻ cào / ATM", href: "/nap-tien", icon: <CreditCard className="w-4 h-4" /> },
-        { name: "Quy định nạp thẻ", href: "/quy-dinh-nap-the", icon: <FileText className="w-4 h-4" /> },
-      ],
-    },
-    {
-      name: "Lịch sử", href: "/lich-su", match: "/lich-su", icon: <History className="w-4 h-4" />,
-      children: [
-        { name: "Lịch sử nạp tiền", href: "/lich-su-nap", icon: <Wallet className="w-4 h-4" /> },
-        { name: "Lịch sử mua hàng", href: "/lich-su-mua", icon: <ShoppingCart className="w-4 h-4" /> },
-        { name: "Biến động số dư", href: "/bien-dong-so-du", icon: <FileText className="w-4 h-4" /> },
-      ],
-    },
+    { name: "Nạp tiền", href: "/nap-tien", match: "/nap-tien", icon: <CreditCard className="w-4 h-4" /> },
+    { name: "Lịch sử nạp", href: "/lich-su-nap", match: "/lich-su-nap", icon: <Wallet className="w-4 h-4" /> },
+    { name: "Lịch sử mua", href: "/lich-su-mua", match: "/lich-su-mua", icon: <ShoppingCart className="w-4 h-4" /> },
+    { name: "Biến động số dư", href: "/bien-dong-so-du", match: "/bien-dong-so-du", icon: <FileText className="w-4 h-4" /> },
+    { name: "Quy định nạp thẻ", href: "/quy-dinh-nap-the", match: "/quy-dinh-nap-the", icon: <FileText className="w-4 h-4" /> },
     { name: "FAQ", href: "/faq", match: "/faq", icon: <HelpCircle className="w-4 h-4" /> },
   ];
 
@@ -115,7 +71,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           <a href="/" className="flex items-center gap-2 shrink-0">
-            <Gamepad2 className="w-8 h-8 text-primary neon-text animate-spin-slow" />
+            <Gamepad2 className="w-10 h-10 text-primary neon-text animate-spin-slow" />
             <AnimatedLogo />
           </a>
 
@@ -187,54 +143,21 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Nav with hover dropdowns */}
-        <nav ref={navRef} className="mt-3 flex items-center gap-1 overflow-x-auto pb-1">
+        {/* Simple flat nav - no dropdowns */}
+        <nav className="mt-3 flex items-center gap-1 overflow-x-auto pb-1">
           {navItems.map((item) => {
-            const isActive = item.match === "/" ? currentPath === "/" : currentPath.startsWith(item.match.replace("/#", "/"));
-            const hasChildren = item.children && item.children.length > 0;
-            const isOpen = openDropdown === item.name;
-
+            const isActive = item.match === "/" ? currentPath === "/" : currentPath.startsWith(item.match);
             return (
-              <div
+              <button
                 key={item.name}
-                className="relative"
-                onMouseEnter={() => hasChildren && handleDropdownEnter(item.name)}
-                onMouseLeave={() => hasChildren && handleDropdownLeave()}
+                onClick={() => navigate(item.href)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                  isActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
               >
-                <button
-                  onClick={() => {
-                    if (hasChildren) {
-                      setOpenDropdown(isOpen ? null : item.name);
-                    } else {
-                      setOpenDropdown(null);
-                      navigate(item.href);
-                    }
-                  }}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    isActive ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {item.icon}
-                  {item.name}
-                  {hasChildren && <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />}
-                </button>
-
-                {hasChildren && isOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[220px] max-h-[400px] overflow-y-auto z-50 animate-fade-in">
-                    {item.children!.map((child) => (
-                      <a
-                        key={child.name}
-                        href={child.href}
-                        onClick={(e) => { e.preventDefault(); setOpenDropdown(null); navigate(child.href); }}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
-                      >
-                        {child.icon}
-                        <span className="truncate">{child.name}</span>
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
+                {item.icon}
+                {item.name}
+              </button>
             );
           })}
         </nav>
