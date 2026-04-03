@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { ShoppingBag, Clock, CheckCircle, Loader2, AlertCircle, FileText } from "lucide-react";
+import { ShoppingBag, Loader2, AlertCircle, Eye, Download, Trash2, Search, X } from "lucide-react";
 
 type Order = {
   id: string;
@@ -23,6 +23,10 @@ const PurchaseHistory = () => {
   const { user, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchCode, setSearchCode] = useState("");
+  const [searchAccount, setSearchAccount] = useState("");
+  const [perPage, setPerPage] = useState(10);
+  const [sortDate, setSortDate] = useState("all");
 
   useEffect(() => {
     if (!user) return;
@@ -51,50 +55,94 @@ const PurchaseHistory = () => {
     );
   }
 
+  let filtered = orders;
+  if (searchCode.trim()) filtered = filtered.filter(o => o.order_code?.toLowerCase().includes(searchCode.toLowerCase()));
+  if (searchAccount.trim()) filtered = filtered.filter(o => o.product_name.toLowerCase().includes(searchAccount.toLowerCase()));
+
+  const displayed = filtered.slice(0, perPage);
+
   return (
     <div className="min-h-screen bg-background">
       <TopBar /><Header />
-      <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-primary neon-text text-center">LỊCH SỬ MUA HÀNG</h1>
-        <p className="text-center text-muted-foreground text-sm">Danh sách các tài khoản đã mua</p>
+      <main className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+        <div className="bg-gradient-to-r from-destructive to-neon-orange rounded-xl p-4">
+          <h1 className="font-display text-lg md:text-xl font-bold text-white flex items-center gap-2">
+            <ShoppingBag className="w-6 h-6" /> LỊCH SỬ ĐƠN HÀNG
+          </h1>
+        </div>
 
-        {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
-        ) : orders.length === 0 ? (
-          <div className="bg-card border border-border rounded-xl p-10 text-center">
-            <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">Chưa có lịch sử mua hàng.</p>
+        <div className="bg-card border border-border rounded-xl p-4 space-y-4">
+          {/* Filters */}
+          <div className="flex flex-wrap gap-3">
+            <input value={searchCode} onChange={e => setSearchCode(e.target.value)} placeholder="Mã đơn hàng"
+              className="bg-muted border border-border rounded-lg py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary w-40" />
+            <input value={searchAccount} onChange={e => setSearchAccount(e.target.value)} placeholder="Sản phẩm"
+              className="bg-muted border border-border rounded-lg py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary w-40" />
+            <button onClick={() => {}} className="flex items-center gap-1.5 px-4 py-2 gradient-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90">
+              <Search className="w-4 h-4" /> Tìm kiếm
+            </button>
+            <button onClick={() => { setSearchCode(""); setSearchAccount(""); }} className="flex items-center gap-1.5 px-4 py-2 bg-muted text-muted-foreground border border-border rounded-lg text-sm font-semibold hover:bg-border">
+              <Trash2 className="w-4 h-4" /> Bỏ lọc
+            </button>
           </div>
-        ) : (
-          <div className="space-y-3 animate-slide-up">
-            {orders.map((o) => (
-              <div key={o.id} className="bg-card border border-primary/20 rounded-xl p-4 neon-card flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <ShoppingBag className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-foreground text-sm truncate">{o.product_name}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
-                      <span className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-medium">{o.product_category}</span>
-                      {o.order_code && <span className="font-mono text-[10px] text-primary font-bold">{o.order_code}</span>}
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(o.created_at).toLocaleString("vi-VN")}</span>
-                    </div>
-                  </div>
-                </div>
-                <Link to={`/don-hang/${o.id}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/30 text-primary rounded-lg text-xs font-semibold hover:bg-primary/20 transition-colors shrink-0">
-                  <FileText className="w-3.5 h-3.5" />Chi tiết
-                </Link>
-                <div className="text-right shrink-0">
-                  <p className="font-bold text-destructive text-sm">-{formatVND(o.price)}</p>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-primary/10 border-primary/30 text-primary">
-                    <CheckCircle className="w-3 h-3" /> Thành công
-                  </span>
-                </div>
-              </div>
-            ))}
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              SHOW: <select value={perPage} onChange={e => setPerPage(Number(e.target.value))} className="bg-muted border border-border rounded px-2 py-1 text-foreground text-sm">
+                <option value={10}>10</option><option value={25}>25</option><option value={50}>50</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              SHORT BY DATE: <select value={sortDate} onChange={e => setSortDate(e.target.value)} className="bg-muted border border-border rounded px-2 py-1 text-foreground text-sm">
+                <option value="all">Tất cả</option>
+              </select>
+            </div>
           </div>
-        )}
+
+          {/* Table */}
+          {loading ? (
+            <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Thao tác</th>
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Mã đơn hàng</th>
+                    <th className="text-left px-3 py-2.5 font-semibold text-foreground italic">Sản phẩm</th>
+                    <th className="text-center px-3 py-2.5 font-semibold text-foreground italic">Số lượng</th>
+                    <th className="text-right px-3 py-2.5 font-semibold text-foreground italic">Thanh toán</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayed.length === 0 ? (
+                    <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Chưa có đơn hàng nào.</td></tr>
+                  ) : displayed.map(o => (
+                    <tr key={o.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                      <td className="px-3 py-2.5">
+                        <div className="flex items-center gap-1">
+                          <Link to={`/don-hang/${o.id}`} className="px-2 py-1 bg-primary/80 text-primary-foreground rounded text-xs font-bold hover:bg-primary transition-colors">
+                            👁 View
+                          </Link>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 font-mono text-foreground text-xs">{o.order_code || "—"}</td>
+                      <td className="px-3 py-2.5 text-foreground max-w-[300px] truncate">{o.product_name}</td>
+                      <td className="px-3 py-2.5 text-center">
+                        <span className="inline-flex items-center justify-center w-6 h-6 bg-primary/10 text-primary text-xs font-bold rounded-full border border-primary/30">1</span>
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <span className="px-2 py-0.5 bg-destructive/10 text-destructive text-xs font-bold rounded border border-destructive/30">{formatVND(o.price)}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <p className="text-sm text-muted-foreground">Showing {perPage} of {filtered.length} Results</p>
+        </div>
       </main>
       <Footer />
     </div>

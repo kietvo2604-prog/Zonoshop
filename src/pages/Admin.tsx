@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, Mail } from "lucide-react";
+import { Users, CreditCard, Package, LayoutDashboard, LogOut, ChevronLeft, Gamepad2, ShoppingBag, FolderOpen, Tag, UserPlus, FileText } from "lucide-react";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminTopups from "@/components/admin/AdminTopups";
 import AdminProducts from "@/components/admin/AdminProducts";
@@ -11,8 +11,9 @@ import AdminOrders from "@/components/admin/AdminOrders";
 import AdminCategories from "@/components/admin/AdminCategories";
 import AdminDiscountCodes from "@/components/admin/AdminDiscountCodes";
 import AdminCTV from "@/components/admin/AdminCTV";
+import AdminShopSettings from "@/components/admin/AdminShopSettings";
 
-type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv";
+type Tab = "overview" | "users" | "topups" | "products" | "orders" | "categories" | "discounts" | "ctv" | "shop_settings";
 
 const Admin = () => {
   const { user, signOut, loading } = useAuth();
@@ -49,6 +50,7 @@ const Admin = () => {
     { id: "categories" as Tab, name: "Danh mục", icon: FolderOpen },
     { id: "discounts" as Tab, name: "Mã giảm giá", icon: Tag },
     { id: "ctv" as Tab, name: "Cấp Quyền CTV", icon: UserPlus },
+    { id: "shop_settings" as Tab, name: "Mô tả Shop", icon: FileText },
   ];
 
   return (
@@ -91,6 +93,7 @@ const Admin = () => {
           {tab === "categories" && <AdminCategories />}
           {tab === "discounts" && <AdminDiscountCodes />}
           {tab === "ctv" && <AdminCTV />}
+          {tab === "shop_settings" && <AdminShopSettings />}
         </div>
       </main>
     </div>

@@ -30,7 +30,7 @@ const AnimatedLogo = () => {
       <span className="text-[8px] md:text-[10px] font-bold tracking-[0.2em] uppercase text-primary/70">
         Shop Acc Uy Tín Nhất
       </span>
-      <h1 className="font-display text-xl md:text-2xl font-bold tracking-wider relative">
+      <h1 className="font-display text-2xl md:text-3xl font-bold tracking-wider relative">
         <span className="neon-text text-primary">
           {displayed}
         </span>
