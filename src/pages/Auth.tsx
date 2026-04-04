@@ -95,10 +95,10 @@ const Auth = () => {
           <div className="flex flex-col items-center mb-6">
             <Gamepad2 className="w-12 h-12 text-primary neon-text mb-2" />
             <h1 className="font-display text-xl font-bold text-primary neon-text">
-              {isLogin ? "ĐĂNG NHẬP" : "ĐĂNG KÝ"}
+              {forgotPassword ? "QUÊN MẬT KHẨU" : isLogin ? "ĐĂNG NHẬP" : "ĐĂNG KÝ"}
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {isLogin ? "Chào mừng trở lại!" : "Tạo tài khoản mới"}
+              {forgotPassword ? "Nhập email để nhận liên kết đặt lại" : isLogin ? "Chào mừng trở lại!" : "Tạo tài khoản mới"}
             </p>
           </div>
 
