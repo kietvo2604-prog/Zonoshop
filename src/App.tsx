@@ -51,6 +51,7 @@ const App = () => (
             <Route path="/quy-dinh-nap-the" element={<CardRegulations />} />
             <Route path="/chinh-sach-bao-hanh" element={<WarrantyPolicy />} />
             <Route path="/ctv" element={<CTVDashboard />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

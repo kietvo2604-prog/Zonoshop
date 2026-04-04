@@ -211,13 +211,24 @@ const Auth = () => {
           </button>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
-            <button
-              onClick={() => { setIsLogin(!isLogin); setError(""); setMessage(""); }}
-              className="text-primary font-semibold hover:underline"
-            >
-              {isLogin ? "Đăng ký ngay" : "Đăng nhập"}
-            </button>
+            {forgotPassword ? (
+              <button
+                onClick={() => { setForgotPassword(false); setError(""); setMessage(""); }}
+                className="text-primary font-semibold hover:underline"
+              >
+                ← Quay lại đăng nhập
+              </button>
+            ) : (
+              <>
+                {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
+                <button
+                  onClick={() => { setIsLogin(!isLogin); setError(""); setMessage(""); }}
+                  className="text-primary font-semibold hover:underline"
+                >
+                  {isLogin ? "Đăng ký ngay" : "Đăng nhập"}
+                </button>
+              </>
+            )}
           </p>
         </div>
       </main>
