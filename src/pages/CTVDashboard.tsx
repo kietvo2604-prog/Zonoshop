@@ -6,6 +6,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Plus, Package, Loader2, AlertCircle, ChevronDown, ChevronUp, Trash2, Eye, EyeOff, Search, Upload } from "lucide-react";
+import ImagePasteUpload from "@/components/ImagePasteUpload";
 import { useToast } from "@/hooks/use-toast";
 
 type CTVAssignment = {
