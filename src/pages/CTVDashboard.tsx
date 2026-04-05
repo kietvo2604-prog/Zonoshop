@@ -378,6 +378,7 @@ type ProductRowProps = {
   showPasswords: Record<string, boolean>;
   onTogglePassword: (id: string) => void;
   onDeleteAccount: (id: string) => void;
+  onDeleteProduct: () => void;
   maskPassword: (info: string) => string;
   addAccountsProductId: string | null;
   onShowAddAccounts: () => void;
@@ -390,7 +391,7 @@ type ProductRowProps = {
 
 const ProductRow = ({
   product, isExpanded, onToggle, accounts, showPasswords,
-  onTogglePassword, onDeleteAccount, maskPassword,
+  onTogglePassword, onDeleteAccount, onDeleteProduct, maskPassword,
   addAccountsProductId, onShowAddAccounts, newAccountLines,
   onNewAccountLinesChange, onAddAccounts, addingAccounts, onCancelAddAccounts
 }: ProductRowProps) => {
