@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Package, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
+import ImagePasteUpload from "@/components/ImagePasteUpload";
 
 type Product = {
   id: string;
