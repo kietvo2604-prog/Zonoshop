@@ -265,10 +265,12 @@ const CTVDashboard = () => {
                   className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm" />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground mb-1 block">Link ảnh sản phẩm</label>
-                <input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })}
-                  placeholder="https://..."
-                  className="w-full bg-muted border border-border rounded-lg py-2.5 px-4 text-foreground focus:outline-none focus:border-primary transition-all text-sm" />
+                <ImagePasteUpload
+                  value={form.image_url}
+                  onChange={(url) => setForm({ ...form, image_url: url })}
+                  label="Ảnh sản phẩm"
+                  placeholder="Dán ảnh hoặc nhập link..."
+                />
               </div>
             </div>
             <div>

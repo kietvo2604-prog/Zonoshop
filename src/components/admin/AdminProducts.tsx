@@ -188,6 +188,12 @@ const AdminProducts = () => {
               </select>
             </div>
           </div>
+          <ImagePasteUpload
+            value={form.image_url}
+            onChange={(url) => setForm({ ...form, image_url: url })}
+            label="Ảnh sản phẩm"
+            placeholder="Dán ảnh hoặc nhập link..."
+          />
           <div>
             <label className="text-sm font-medium text-foreground mb-1 block">Mô tả</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2}
