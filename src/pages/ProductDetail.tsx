@@ -11,6 +11,30 @@ import PurchaseConfirmDialog from "@/components/PurchaseConfirmDialog";
 
 const formatVND = (n: number) => n.toLocaleString("vi-VN") + "đ";
 
+const IMAGE_URL_REGEX = /https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg)(?:\?[^\s]*)?/gi;
+
+const DescriptionWithImages = ({ text }: { text: string }) => {
+  const parts = text.split(IMAGE_URL_REGEX);
+  const images = text.match(IMAGE_URL_REGEX) || [];
+  
+  return (
+    <div className="text-sm text-foreground space-y-2">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {part.split('\n').map((line, j) => (
+            <span key={j}>{j > 0 && <br />}{line}</span>
+          ))}
+          {images[i] && (
+            <a href={images[i]} target="_blank" rel="noopener noreferrer" className="block my-2">
+              <img src={images[i]} alt="Ảnh sản phẩm" className="max-w-full rounded-lg border border-border max-h-64 object-contain" />
+            </a>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
