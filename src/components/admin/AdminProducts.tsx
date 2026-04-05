@@ -98,7 +98,7 @@ const AdminProducts = () => {
     if (editing) {
       await supabase.from("products").update({
         name: form.name, description: form.description, price: form.price,
-        category: form.category, status: form.status,
+        category: form.category, status: form.status, image_url: form.image_url || null,
       }).eq("id", editing.id);
 
       if (accountLines.trim()) {
