@@ -332,6 +332,7 @@ const CTVDashboard = () => {
                   <th className="text-right px-4 py-3 font-semibold text-foreground">Giá</th>
                   <th className="text-center px-4 py-3 font-semibold text-foreground">Kho</th>
                   <th className="text-center px-4 py-3 font-semibold text-foreground">Trạng thái</th>
+                  <th className="text-right px-4 py-3 font-semibold text-foreground">Hành động</th>
                 </tr>
               </thead>
               <tbody>
