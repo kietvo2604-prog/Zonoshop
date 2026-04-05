@@ -116,7 +116,7 @@ const AdminProducts = () => {
     } else {
       const { data: newProduct } = await supabase.from("products").insert({
         name: form.name, description: form.description, price: form.price,
-        category: form.category, status: form.status, stock: 0,
+        category: form.category, status: form.status, stock: 0, image_url: form.image_url || null,
       }).select().single();
 
       if (newProduct && accountLines.trim()) {
