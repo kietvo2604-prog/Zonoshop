@@ -152,6 +152,7 @@ const AdminCategories = () => {
               <th className="text-left px-4 py-3 font-semibold text-foreground">Ảnh</th>
               <th className="text-left px-4 py-3 font-semibold text-foreground">Tên</th>
               <th className="text-left px-4 py-3 font-semibold text-foreground">Slug</th>
+              <th className="text-left px-4 py-3 font-semibold text-foreground">Sản phẩm</th>
               <th className="text-right px-4 py-3 font-semibold text-foreground">Hành động</th>
             </tr>
           </thead>
