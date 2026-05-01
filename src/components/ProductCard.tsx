@@ -55,6 +55,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
       p_user_id: user.id,
       p_product_id: id,
       p_quantity: quantity,
+      p_discount_code: discountCode || null,
     });
 
     if (error) {
@@ -70,12 +71,7 @@ const ProductCard = ({ id, name, price, numericPrice, stock, description, catego
       return;
     }
 
-    // Update discount code usage
-    if (discountCode) {
-      await supabase.from("discount_codes")
-        .update({ used_count: (await supabase.from("discount_codes").select("used_count").eq("code", discountCode).single()).data?.used_count + 1 || 1 })
-        .eq("code", discountCode);
-    }
+
 
     setBuying(false);
     setPurchasedQuantity(result.quantity || quantity);
