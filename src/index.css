@@ -9,49 +9,49 @@
 
 @layer base {
   :root {
-    --background: 240 4% 95%;
-    --foreground: 240 5% 10%;
+    --background: 210 20% 96%;
+    --foreground: 220 25% 12%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 240 5% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 12%;
 
-    --popover: 240 5% 90%;
-    --popover-foreground: 240 5% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 12%;
 
-    --primary: 258 89% 66%;
-    --primary-foreground: 250 100% 97%;
+    --primary: 142 76% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 5% 33%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 185 90% 38%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 4% 83%;
-    --muted-foreground: 240 5% 10%;
+    --muted: 210 16% 90%;
+    --muted-foreground: 220 12% 35%;
 
-    --accent: 269 100% 98%;
-    --accent-foreground: 270 91% 65%;
+    --accent: 142 76% 95%;
+    --accent-foreground: 142 76% 30%;
 
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 85% 97%;
+    --destructive: 0 85% 52%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 83%;
-    --input: 240 4% 83%;
-    --ring: 258 89% 66%;
+    --border: 210 16% 84%;
+    --input: 210 16% 84%;
+    --ring: 142 76% 42%;
 
     --radius: 0.5rem;
 
-    --neon-glow: 145 80% 45%;
-    --neon-cyan: 185 80% 45%;
-    --neon-orange: 35 95% 55%;
-    --neon-red: 0 85% 55%;
+    --neon-glow: 142 76% 42%;
+    --neon-cyan: 185 90% 38%;
+    --neon-orange: 30 100% 50%;
+    --neon-red: 0 85% 52%;
 
-    --sidebar-background: 220 18% 10%;
-    --sidebar-foreground: 240 5% 10%;
-    --sidebar-primary: 258 89% 66%;
-    --sidebar-primary-foreground: 250 100% 97%;
-    --sidebar-accent: 240 5% 33%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 83%;
-    --sidebar-ring: 258 89% 66%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 12%;
+    --sidebar-primary: 142 76% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 16% 90%;
+    --sidebar-accent-foreground: 220 25% 12%;
+    --sidebar-border: 210 16% 84%;
+    --sidebar-ring: 142 76% 42%;
     --chart-1: 255 91% 76%;
     --chart-2: 270 95% 75%;
     --chart-3: 234 89% 73%;
