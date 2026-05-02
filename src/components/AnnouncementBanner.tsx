@@ -7,7 +7,7 @@ const DEFAULT_DESC = "🔥 Giao dịch tự động 24/7 – Mua là có ngay\n�
 
 const AnnouncementBanner = () => {
   const [title, setTitle] = useState(DEFAULT_TITLE);
-  const [descLines, setDescLines] = useState<string[]>(DEFAULT_DESC.split("\n"));
+  const [descHtml, setDescHtml] = useState<string>(DEFAULT_DESC);
 
   useEffect(() => {
     supabase.from("shop_settings").select("*").then(({ data }) => {
@@ -15,11 +15,10 @@ const AnnouncementBanner = () => {
       (data || []).forEach((s: any) => { map[s.key] = s.value; });
       if (map["shop_title"]) setTitle(map["shop_title"]);
       if (map["shop_description"]) {
-        setDescLines(map["shop_description"].split("\n").filter(Boolean));
+        setDescHtml(map["shop_description"]);
       } else {
-        // Fallback to old subtitle fields
         const lines = [map["shop_subtitle_1"], map["shop_subtitle_2"], map["shop_subtitle_3"]].filter(Boolean);
-        if (lines.length > 0) setDescLines(lines);
+        if (lines.length > 0) setDescHtml(lines.join("\n"));
       }
     });
   }, []);
