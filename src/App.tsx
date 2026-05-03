@@ -38,6 +38,7 @@ const App = () => (
         <TopupNotifier />
         <KietzBadge />
         <BrowserRouter>
+          <PageLoader />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/nap-tien" element={<TopUp />} />
