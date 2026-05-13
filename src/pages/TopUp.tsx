@@ -7,7 +7,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import {
   CreditCard, Smartphone, Wallet, Gift, Copy, CheckCircle,
-  AlertTriangle, ArrowRight, Loader2, Clock, XCircle, History
+  AlertTriangle, ArrowRight, Loader2, Clock, XCircle, History,
+  RefreshCw, QrCode
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -56,8 +57,57 @@ const TopUp = () => {
   const [pendingAtmRequest, setPendingAtmRequest] = useState<TopupRequest | null>(null);
   const [sepayQrUrl, setSepayQrUrl] = useState<string | null>(null);
   const [loadingQr, setLoadingQr] = useState(false);
+  const [customQrAmount, setCustomQrAmount] = useState("");
+  const [generatingCustomQr, setGeneratingCustomQr] = useState(false);
 
   const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
+
+  // Generate or regenerate QR code with optional amount
+  const handleGenerateQr = async (amount?: number) => {
+    if (!user || !transferCode) {
+      toast({ title: "Lỗi", description: "Vui lòng đăng nhập để tạo mã QR.", variant: "destructive" });
+      return;
+    }
+
+    setGeneratingCustomQr(true);
+    try {
+      const { data: qrData, error: qrError } = await supabase.functions.invoke("generate-sepay-qr", {
+        body: {
+          user_id: user.id,
+          transfer_code: transferCode,
+          amount: amount,
+        },
+      });
+
+      if (qrError) {
+        toast({ title: "Lỗi", description: "Không thể tạo mã QR. Vui lòng thử lại.", variant: "destructive" });
+        return;
+      }
+
+      if (qrData?.qr_url) {
+        setSepayQrUrl(qrData.qr_url);
+        toast({ 
+          title: "Tạo mã QR thành công", 
+          description: amount ? `Mã QR với số tiền ${formatVND(amount)} đã được tạo.` : "Mã QR mới đã được tạo." 
+        });
+      } else if (qrData?.success) {
+        const { data: updatedProfile } = await supabase
+          .from("profiles")
+          .select("bank_qr_code")
+          .eq("user_id", user.id)
+          .single();
+        if (updatedProfile?.bank_qr_code) {
+          setSepayQrUrl(updatedProfile.bank_qr_code);
+          toast({ title: "Tạo mã QR thành công" });
+        }
+      }
+    } catch (err) {
+      toast({ title: "Lỗi", description: "Đã xảy ra lỗi khi tạo mã QR.", variant: "destructive" });
+    } finally {
+      setGeneratingCustomQr(false);
+      setCustomQrAmount("");
+    }
+  };
 
   // Fetch transfer code, QR code, and recent topups
   useEffect(() => {
@@ -424,25 +474,97 @@ const TopUp = () => {
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="bg-white p-6 space-y-4">
+{/* Content */}
+                    <div className="bg-white p-6 space-y-4">
                     {/* QR Code Section */}
                     <div className="flex flex-col items-center justify-center">
-                      {loadingQr ? (
+                      {/* SePay Badge */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                          <QrCode className="w-3 h-3" /> SePay QR
+                        </span>
+                        {sepayQrUrl && !loadingQr && (
+                          <button
+                            onClick={() => handleGenerateQr()}
+                            disabled={generatingCustomQr}
+                            className="text-blue-600 hover:text-blue-700 text-xs flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full transition-colors"
+                          >
+                            {generatingCustomQr ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <RefreshCw className="w-3 h-3" />
+                            )}
+                            Tạo lại
+                          </button>
+                        )}
+                      </div>
+
+                      {loadingQr || generatingCustomQr ? (
                         <div className="w-56 h-56 flex items-center justify-center bg-gray-100 rounded-lg">
-                          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                          <div className="text-center">
+                            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
+                            <p className="text-xs text-gray-500 mt-2">Đang tạo mã QR...</p>
+                          </div>
                         </div>
                       ) : sepayQrUrl ? (
-                        <img 
-                          src={sepayQrUrl} 
-                          alt="MB Bank Sepay QR" 
-                          className="w-56 h-56 rounded-lg border-2 border-gray-200 object-contain" 
-                        />
+                        <div className="relative">
+                          <img 
+                            src={sepayQrUrl} 
+                            alt="MB Bank Sepay QR" 
+                            className="w-56 h-56 rounded-lg border-2 border-blue-200 object-contain shadow-lg" 
+                          />
+                          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md border border-gray-200">
+                            <span className="text-xs font-semibold text-gray-700">Quét để thanh toán</span>
+                          </div>
+                        </div>
                       ) : (
-                        <div className="w-56 h-56 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <p className="text-center text-sm text-gray-500">QR code đang được tạo...</p>
+                        <div className="w-56 h-56 bg-gray-100 rounded-lg flex flex-col items-center justify-center">
+                          <QrCode className="w-12 h-12 text-gray-300 mb-2" />
+                          <p className="text-center text-sm text-gray-500">Chưa có mã QR</p>
+                          <button
+                            onClick={() => handleGenerateQr()}
+                            className="mt-2 text-blue-600 hover:text-blue-700 text-xs font-semibold flex items-center gap-1"
+                          >
+                            <RefreshCw className="w-3 h-3" /> Tạo mã QR
+                          </button>
                         </div>
                       )}
+                    </div>
+
+                    {/* Quick Amount QR Generation */}
+                    <div className="border-t border-gray-200 pt-4">
+                      <p className="text-xs text-gray-600 mb-2 text-center font-medium">Tạo QR với số tiền cụ thể</p>
+                      <div className="flex gap-2 flex-wrap justify-center">
+                        {[50000, 100000, 200000, 500000].map((amount) => (
+                          <button
+                            key={amount}
+                            onClick={() => handleGenerateQr(amount)}
+                            disabled={generatingCustomQr}
+                            className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
+                          >
+                            {formatVND(amount)}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <input
+                          type="text"
+                          value={customQrAmount}
+                          onChange={(e) => setCustomQrAmount(e.target.value.replace(/\D/g, ""))}
+                          placeholder="Số tiền khác..."
+                          className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <button
+                          onClick={() => {
+                            const amount = parseInt(customQrAmount, 10);
+                            if (amount > 0) handleGenerateQr(amount);
+                          }}
+                          disabled={generatingCustomQr || !customQrAmount}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center gap-1"
+                        >
+                          <QrCode className="w-4 h-4" /> Tạo QR
+                        </button>
+                      </div>
                     </div>
 
                     {/* Account Info */}
