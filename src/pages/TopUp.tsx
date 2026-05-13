@@ -464,6 +464,11 @@ const TopUp = () => {
                           <p className="text-center text-sm text-gray-500">Không thể tải mã QR</p>
                         </div>
                       )}
+                      
+                      {/* Instruction text */}
+                      <p className="text-xs text-gray-500 mt-4 text-center max-w-xs">
+                        Quét mã QR và chuyển bất kỳ số tiền nào. Hệ thống sẽ tự động cộng tiền vào tài khoản của bạn.
+                      </p>
                     </div>
 
                     {/* Account Info */}
