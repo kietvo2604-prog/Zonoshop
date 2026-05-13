@@ -57,6 +57,9 @@ const TopUp = () => {
   const [transferCode, setTransferCode] = useState<string | null>(null);
   const [recentTopups, setRecentTopups] = useState<TopupRequest[]>([]);
   const [loadingTopups, setLoadingTopups] = useState(false);
+  const [atmAmount, setAtmAmount] = useState("");
+  const [approveLoading, setApproveLoading] = useState(false);
+  const [pendingAtmRequest, setPendingAtmRequest] = useState<TopupRequest | null>(null);
 
   const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
 
@@ -71,10 +74,72 @@ const TopUp = () => {
       ]);
       setTransferCode(profileRes.data?.transfer_code || null);
       setRecentTopups(topupRes.data || []);
+      
+      // Find pending ATM transfer
+      const pendingAtm = (topupRes.data || []).find(
+        (t) => t.status === "pending" && t.method.toLowerCase().includes("chuyển khoản")
+      );
+      setPendingAtmRequest(pendingAtm || null);
+      
       setLoadingTopups(false);
     };
     fetchData();
   }, [user]);
+
+  const handleAutoApproveAtm = async () => {
+    if (!user || !pendingAtmRequest) {
+      toast({ title: "Lỗi", description: "Không có yêu cầu chuyển khoản chờ xử lý.", variant: "destructive" });
+      return;
+    }
+    
+    if (!atmAmount.trim()) {
+      toast({ title: "Lỗi", description: "Vui lòng nhập số tiền đã chuyển.", variant: "destructive" });
+      return;
+    }
+
+    const amount = parseInt(atmAmount.replace(/\D/g, ""), 10);
+    if (isNaN(amount) || amount <= 0) {
+      toast({ title: "Lỗi", description: "Vui lòng nhập số tiền hợp lệ.", variant: "destructive" });
+      return;
+    }
+
+    setApproveLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("auto-approve-atm", {
+        body: { topup_request_id: pendingAtmRequest.id, transfer_amount: amount },
+      });
+
+      if (error || !data?.success) {
+        toast({
+          title: "❌ Lỗi",
+          description: data?.error || "Không thể phê duyệt. Vui lòng thử lại.",
+          variant: "destructive",
+        });
+        setApproveLoading(false);
+        return;
+      }
+
+      toast({
+        title: "✅ Đã phê duyệt tự động",
+        description: `Nạp ${formatVND(amount)} → Thực cộng ${formatVND(data.credit_amount)} (bonus ${data.bonus_rate})`,
+      });
+
+      setAtmAmount("");
+      setPendingAtmRequest(null);
+
+      // Refresh topups list
+      const { data: newTopups } = await supabase.from("topup_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5);
+      setRecentTopups(newTopups || []);
+    } catch (err) {
+      toast({
+        title: "❌ Lỗi",
+        description: err instanceof Error ? err.message : "Lỗi không xác định",
+        variant: "destructive",
+      });
+    } finally {
+      setApproveLoading(false);
+    }
+  };
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -386,6 +451,51 @@ const TopUp = () => {
                 ⚠️ Mỗi tài khoản có một mã riêng. Vui lòng ghi đúng nội dung chuyển khoản để hệ thống tự động cộng tiền.
               </p>
             </div>
+
+            {/* Auto-Approve ATM Transfer */}
+            {pendingAtmRequest && (
+              <div className="bg-card border border-accent/30 rounded-xl p-6 neon-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle className="w-6 h-6 text-accent" />
+                  <h3 className="font-bold text-foreground">⚡ Đã chuyển khoản?</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Bạn có yêu cầu chuyển khoản ATM đang chờ xử lý. Hãy nhập số tiền bạn đã chuyển để hệ thống tự động phê duyệt và cộng tiền ngay lập tức.
+                </p>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">Số tiền đã chuyển (VNĐ)</label>
+                    <input
+                      type="text"
+                      value={atmAmount}
+                      onChange={(e) => setAtmAmount(e.target.value.replace(/\D/g, ""))}
+                      placeholder="Ví dụ: 50000"
+                      className="w-full bg-muted border border-border rounded-lg py-3 px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:neon-border transition-all"
+                    />
+                    {atmAmount && (
+                      <p className="text-xs text-accent mt-2">
+                        💰 Bạn sẽ nhận: <span className="font-bold">{formatVND(
+                          parseInt(atmAmount, 10) < 50000 
+                            ? Math.floor(parseInt(atmAmount, 10) * 1.10)
+                            : Math.floor(parseInt(atmAmount, 10) * 1.05)
+                        )}</span>
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleAutoApproveAtm}
+                    disabled={approveLoading || !atmAmount}
+                    className="w-full py-3 gradient-accent text-accent-foreground font-bold rounded-lg text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    {approveLoading ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Đang xử lý...</>
+                    ) : (
+                      <><CheckCircle className="w-4 h-4" /> Phê duyệt tự động → Cộng tiền ngay</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
