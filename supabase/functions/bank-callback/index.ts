@@ -13,11 +13,26 @@ serve(async (req) => {
   }
 
   try {
-    const { transfer_content, amount, secret_key } = await req.json();
+    const body = await req.json();
+
+const transfer_content = body.content;
+const amount = Number(body.transferAmount || 0);
+const transfer_type = body.transferType;
+    if (transfer_type !== "in") {
+  return new Response(
+    JSON.stringify({ error: "Not incoming transfer" }),
+    {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
 
     // Validate secret key to prevent unauthorized calls
-    const WEBHOOK_SECRET = Deno.env.get("TOPUP_WEBHOOK_SECRET");
-    if (!WEBHOOK_SECRET || secret_key !== WEBHOOK_SECRET) {
+    // Validate secret key... {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
