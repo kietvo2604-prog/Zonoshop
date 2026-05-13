@@ -65,30 +65,40 @@ const TopUp = () => {
     const fetchData = async () => {
       setLoadingTopups(true);
       setLoadingQr(true);
-      const [profileRes, topupRes] = await Promise.all([
-        supabase.from("profiles").select("transfer_code, bank_qr_code").eq("user_id", user.id).single(),
-        supabase.from("topup_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
-      ]);
-      
-      const userTransferCode = profileRes.data?.transfer_code || null;
-      setTransferCode(userTransferCode);
-      setRecentTopups(topupRes.data || []);
-      
-      // Find pending ATM transfer
-      const pendingAtm = (topupRes.data || []).find(
-        (t) => t.status === "pending" && t.method.toLowerCase().includes("chuyển khoản")
-      );
-      setPendingAtmRequest(pendingAtm || null);
-      
-      // Generate QR URL directly using VietQR (free public API)
-      // MB Bank ID: 970422, Account: 0987672604
-      if (userTransferCode) {
-        const qrUrl = `https://img.vietqr.io/image/970422-0987672604-compact2.png?addInfo=${encodeURIComponent(userTransferCode)}&accountName=${encodeURIComponent("VO ANH KIET")}`;
-        setSepayQrUrl(qrUrl);
+      try {
+        const [profileRes, topupRes] = await Promise.all([
+          supabase.from("profiles").select("transfer_code, bank_qr_code").eq("user_id", user.id).single(),
+          supabase.from("topup_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
+        ]);
+        
+        console.log("[v0] Profile response:", profileRes);
+        console.log("[v0] User transfer_code:", profileRes.data?.transfer_code);
+        
+        const userTransferCode = profileRes.data?.transfer_code || null;
+        setTransferCode(userTransferCode);
+        setRecentTopups(topupRes.data || []);
+        
+        // Find pending ATM transfer
+        const pendingAtm = (topupRes.data || []).find(
+          (t) => t.status === "pending" && t.method.toLowerCase().includes("chuyển khoản")
+        );
+        setPendingAtmRequest(pendingAtm || null);
+        
+        // Generate QR URL directly using VietQR (free public API)
+        // MB Bank ID: 970422, Account: 0987672604
+        if (userTransferCode) {
+          const qrUrl = `https://img.vietqr.io/image/970422-0987672604-compact2.png?addInfo=${encodeURIComponent(userTransferCode)}&accountName=${encodeURIComponent("VO ANH KIET")}`;
+          console.log("[v0] Generated QR URL:", qrUrl);
+          setSepayQrUrl(qrUrl);
+        } else {
+          console.log("[v0] No transfer_code found for user");
+        }
+      } catch (error) {
+        console.error("[v0] Error fetching data:", error);
+      } finally {
+        setLoadingTopups(false);
+        setLoadingQr(false);
       }
-      
-      setLoadingTopups(false);
-      setLoadingQr(false);
     };
     fetchData();
   }, [user]);
