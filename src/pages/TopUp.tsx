@@ -55,23 +55,29 @@ const TopUp = () => {
   const [approveLoading, setApproveLoading] = useState(false);
   const [pendingAtmRequest, setPendingAtmRequest] = useState<TopupRequest | null>(null);
   const [sepayQrUrl, setSepayQrUrl] = useState<string | null>(null);
-  const [loadingQr, setLoadingQr] = useState(false);
+  const [loadingQr, setLoadingQr] = useState(true);
 
   const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
 
   // Fetch transfer code, QR code, and recent topups
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoadingQr(false);
+      return;
+    }
     const fetchData = async () => {
       setLoadingTopups(true);
       setLoadingQr(true);
       try {
-        const [profileRes, topupRes] = await Promise.all([
-          supabase.from("profiles").select("transfer_code, bank_qr_code").eq("user_id", user.id).single(),
-          supabase.from("topup_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
-        ]);
+        const profileRes = await supabase.from("profiles").select("transfer_code, bank_qr_code").eq("user_id", user.id).single();
+        const topupRes = await supabase.from("topup_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5);
+        
+        console.log("[v0] profileRes:", JSON.stringify(profileRes));
+        console.log("[v0] user.id:", user.id);
         
         const userTransferCode = profileRes.data?.transfer_code || null;
+        console.log("[v0] userTransferCode:", userTransferCode);
+        
         setTransferCode(userTransferCode);
         setRecentTopups(topupRes.data || []);
         
@@ -85,10 +91,13 @@ const TopUp = () => {
         // MB Bank ID: 970422, Account: 0987672604
         if (userTransferCode) {
           const qrUrl = `https://img.vietqr.io/image/970422-0987672604-compact2.png?addInfo=${encodeURIComponent(userTransferCode)}&accountName=${encodeURIComponent("VO ANH KIET")}`;
+          console.log("[v0] Setting QR URL:", qrUrl);
           setSepayQrUrl(qrUrl);
+        } else {
+          console.log("[v0] No transfer_code found, not setting QR URL");
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("[v0] Error fetching data:", error);
       } finally {
         setLoadingTopups(false);
         setLoadingQr(false);
@@ -182,7 +191,7 @@ const TopUp = () => {
   const handleSubmit = async () => {
     if (!validateCard()) return;
     if (!user) {
-      toast({ title: "Vui lòng đăng nhập", description: "Bạn cần đăng nhập để nạp thẻ.", variant: "destructive" });
+      toast({ title: "Vui lòng đăng nhập", description: "Bạn c��n đăng nhập để nạp thẻ.", variant: "destructive" });
       return;
     }
     setSubmitting(true);
