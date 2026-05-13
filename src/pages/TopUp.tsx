@@ -57,55 +57,35 @@ const TopUp = () => {
   const [pendingAtmRequest, setPendingAtmRequest] = useState<TopupRequest | null>(null);
   const [sepayQrUrl, setSepayQrUrl] = useState<string | null>(null);
   const [loadingQr, setLoadingQr] = useState(false);
-  const [customQrAmount, setCustomQrAmount] = useState("");
-  const [generatingCustomQr, setGeneratingCustomQr] = useState(false);
 
   const currentCard = cardTypes.find((c) => c.id === selectedCard)!;
 
-  // Generate or regenerate QR code with optional amount
-  const handleGenerateQr = async (amount?: number) => {
-    if (!user || !transferCode) {
-      toast({ title: "Lỗi", description: "Vui lòng đăng nhập để tạo mã QR.", variant: "destructive" });
-      return;
-    }
-
-    setGeneratingCustomQr(true);
+  // Function to generate/refresh QR code
+  const generateQrCode = async (userId: string, code: string) => {
+    setLoadingQr(true);
     try {
       const { data: qrData, error: qrError } = await supabase.functions.invoke("generate-sepay-qr", {
         body: {
-          user_id: user.id,
-          transfer_code: transferCode,
-          amount: amount,
+          user_id: userId,
+          transfer_code: code,
         },
       });
 
       if (qrError) {
         toast({ title: "Lỗi", description: "Không thể tạo mã QR. Vui lòng thử lại.", variant: "destructive" });
-        return;
+        return null;
       }
 
       if (qrData?.qr_url) {
         setSepayQrUrl(qrData.qr_url);
-        toast({ 
-          title: "Tạo mã QR thành công", 
-          description: amount ? `Mã QR với số tiền ${formatVND(amount)} đã được tạo.` : "Mã QR mới đã được tạo." 
-        });
-      } else if (qrData?.success) {
-        const { data: updatedProfile } = await supabase
-          .from("profiles")
-          .select("bank_qr_code")
-          .eq("user_id", user.id)
-          .single();
-        if (updatedProfile?.bank_qr_code) {
-          setSepayQrUrl(updatedProfile.bank_qr_code);
-          toast({ title: "Tạo mã QR thành công" });
-        }
+        return qrData.qr_url;
       }
+      return null;
     } catch (err) {
       toast({ title: "Lỗi", description: "Đã xảy ra lỗi khi tạo mã QR.", variant: "destructive" });
+      return null;
     } finally {
-      setGeneratingCustomQr(false);
-      setCustomQrAmount("");
+      setLoadingQr(false);
     }
   };
 
@@ -115,13 +95,17 @@ const TopUp = () => {
     const fetchData = async () => {
       setLoadingTopups(true);
       setLoadingQr(true);
+      
       const [profileRes, topupRes] = await Promise.all([
         supabase.from("profiles").select("transfer_code, bank_qr_code").eq("user_id", user.id).single(),
         supabase.from("topup_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
       ]);
       
-      setTransferCode(profileRes.data?.transfer_code || null);
-      setSepayQrUrl(profileRes.data?.bank_qr_code || null);
+      const code = profileRes.data?.transfer_code || null;
+      const existingQr = profileRes.data?.bank_qr_code || null;
+      
+      setTransferCode(code);
+      setSepayQrUrl(existingQr);
       setRecentTopups(topupRes.data || []);
       
       // Find pending ATM transfer
@@ -130,38 +114,11 @@ const TopUp = () => {
       );
       setPendingAtmRequest(pendingAtm || null);
       
-      // If no QR code yet, trigger generation
-      if (!profileRes.data?.bank_qr_code && profileRes.data?.transfer_code) {
-        try {
-          console.log("[v0] Triggering QR generation for user:", user.id);
-          const { data: qrData, error: qrError } = await supabase.functions.invoke("generate-sepay-qr", {
-            body: {
-              user_id: user.id,
-              transfer_code: profileRes.data.transfer_code,
-            },
-          });
-          console.log("[v0] QR generation response:", qrData, "Error:", qrError);
-          
-          if (qrError) {
-            console.error("[v0] QR generation error:", qrError);
-          } else if (qrData?.qr_url) {
-            console.log("[v0] Setting QR URL:", qrData.qr_url);
-            setSepayQrUrl(qrData.qr_url);
-          } else if (qrData?.success) {
-            console.log("[v0] QR generated successfully, reloading profile...");
-            // Reload profile to get updated QR code
-            const { data: updatedProfile } = await supabase
-              .from("profiles")
-              .select("bank_qr_code")
-              .eq("user_id", user.id)
-              .single();
-            if (updatedProfile?.bank_qr_code) {
-              setSepayQrUrl(updatedProfile.bank_qr_code);
-            }
-          }
-        } catch (err) {
-          console.error("[v0] QR generation exception:", err);
-        }
+      // Generate QR if we have transfer_code but no QR yet
+      if (code && !existingQr) {
+        await generateQrCode(user.id, code);
+      } else {
+        setLoadingQr(false);
       }
       
       setLoadingTopups(false);
@@ -483,13 +440,13 @@ const TopUp = () => {
                         <span className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                           <QrCode className="w-3 h-3" /> SePay QR
                         </span>
-                        {sepayQrUrl && !loadingQr && (
+                        {sepayQrUrl && !loadingQr && transferCode && (
                           <button
-                            onClick={() => handleGenerateQr()}
-                            disabled={generatingCustomQr}
+                            onClick={() => generateQrCode(user!.id, transferCode)}
+                            disabled={loadingQr}
                             className="text-blue-600 hover:text-blue-700 text-xs flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full transition-colors"
                           >
-                            {generatingCustomQr ? (
+                            {loadingQr ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
                             ) : (
                               <RefreshCw className="w-3 h-3" />
@@ -499,7 +456,7 @@ const TopUp = () => {
                         )}
                       </div>
 
-                      {loadingQr || generatingCustomQr ? (
+                      {loadingQr ? (
                         <div className="w-56 h-56 flex items-center justify-center bg-gray-100 rounded-lg">
                           <div className="text-center">
                             <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
@@ -517,58 +474,39 @@ const TopUp = () => {
                             <span className="text-xs font-semibold text-gray-700">Quét để thanh toán</span>
                           </div>
                         </div>
-                      ) : (
+                      ) : !user ? (
+                        <div className="w-56 h-56 bg-gray-100 rounded-lg flex flex-col items-center justify-center">
+                          <QrCode className="w-12 h-12 text-gray-300 mb-2" />
+                          <p className="text-center text-sm text-gray-500">Vui lòng đăng nhập</p>
+                          <p className="text-center text-xs text-gray-400 mt-1">để xem mã QR của bạn</p>
+                        </div>
+                      ) : transferCode ? (
                         <div className="w-56 h-56 bg-gray-100 rounded-lg flex flex-col items-center justify-center">
                           <QrCode className="w-12 h-12 text-gray-300 mb-2" />
                           <p className="text-center text-sm text-gray-500">Chưa có mã QR</p>
                           <button
-                            onClick={() => handleGenerateQr()}
+                            onClick={() => generateQrCode(user.id, transferCode)}
+                            disabled={loadingQr}
                             className="mt-2 text-blue-600 hover:text-blue-700 text-xs font-semibold flex items-center gap-1"
                           >
                             <RefreshCw className="w-3 h-3" /> Tạo mã QR
                           </button>
                         </div>
+                      ) : (
+                        <div className="w-56 h-56 bg-gray-100 rounded-lg flex flex-col items-center justify-center">
+                          <Loader2 className="w-8 h-8 animate-spin text-gray-400 mb-2" />
+                          <p className="text-center text-sm text-gray-500">Đang tải...</p>
+                        </div>
                       )}
-                    </div>
-
-                    {/* Quick Amount QR Generation */}
-                    <div className="border-t border-gray-200 pt-4">
-                      <p className="text-xs text-gray-600 mb-2 text-center font-medium">Tạo QR với số tiền cụ thể</p>
-                      <div className="flex gap-2 flex-wrap justify-center">
-                        {[50000, 100000, 200000, 500000].map((amount) => (
-                          <button
-                            key={amount}
-                            onClick={() => handleGenerateQr(amount)}
-                            disabled={generatingCustomQr}
-                            className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
-                          >
-                            {formatVND(amount)}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="flex gap-2 mt-3">
-                        <input
-                          type="text"
-                          value={customQrAmount}
-                          onChange={(e) => setCustomQrAmount(e.target.value.replace(/\D/g, ""))}
-                          placeholder="Số tiền khác..."
-                          className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <button
-                          onClick={() => {
-                            const amount = parseInt(customQrAmount, 10);
-                            if (amount > 0) handleGenerateQr(amount);
-                          }}
-                          disabled={generatingCustomQr || !customQrAmount}
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center gap-1"
-                        >
-                          <QrCode className="w-4 h-4" /> Tạo QR
-                        </button>
-                      </div>
+                      
+                      {/* Instruction text */}
+                      <p className="text-xs text-gray-500 mt-4 text-center max-w-xs">
+                        Quét mã QR và chuyển bất kỳ số tiền nào. Hệ thống sẽ tự động cộng tiền vào tài khoản của bạn.
+                      </p>
                     </div>
 
                     {/* Account Info */}
-                    <div className="space-y-2 text-sm">
+                    <div className="border-t border-gray-200 pt-4 space-y-2 text-sm">
                       <div className="flex items-center justify-between pb-2 border-b border-gray-200">
                         <span className="text-gray-600">Số tài khoản</span>
                         <div className="flex items-center gap-2">
@@ -592,11 +530,11 @@ const TopUp = () => {
                       </div>
 
                       {/* Transfer Code */}
-                      {transferCode && (
+                      {transferCode ? (
                         <div className="bg-pink-50 border border-pink-200 rounded-lg p-3 mt-3">
-                          <p className="text-xs text-gray-600 mb-1">NỘI DUNG CHUYỂN KHOẢN</p>
+                          <p className="text-xs text-gray-600 mb-1">NỘI DUNG CHUYỂN KHOẢN (BẮT BUỘC)</p>
                           <div className="flex items-center justify-between">
-                            <code className="font-bold text-red-600 text-sm">{transferCode}</code>
+                            <code className="font-bold text-red-600 text-lg">{transferCode}</code>
                             <button 
                               onClick={() => handleCopy(transferCode, "content")} 
                               className="text-blue-600 hover:text-blue-700 text-xs flex items-center gap-1"
@@ -608,6 +546,17 @@ const TopUp = () => {
                               )}
                             </button>
                           </div>
+                        </div>
+                      ) : user ? (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-spin text-yellow-600" />
+                            <p className="text-sm text-yellow-700">Đang tải mã chuyển khoản...</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-3">
+                          <p className="text-sm text-gray-500 text-center">Vui lòng đăng nhập để xem mã chuyển khoản của bạn.</p>
                         </div>
                       )}
                     </div>
@@ -644,6 +593,11 @@ const TopUp = () => {
                   <button onClick={() => handleCopy(transferCode, "content")} className="flex items-center gap-1 text-primary hover:text-primary/80 text-xs">
                     {copiedField === "content" ? <><CheckCircle className="w-3 h-3" /> Đã copy</> : <><Copy className="w-3 h-3" /> Copy</>}
                   </button>
+                </div>
+              ) : user ? (
+                <div className="bg-muted border border-border rounded-lg p-4 flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  <p className="text-muted-foreground text-sm">Đang tải mã chuyển khoản...</p>
                 </div>
               ) : (
                 <div className="bg-muted border border-border rounded-lg p-4 text-center">
