@@ -10,60 +10,60 @@
 @layer base {
   :root {
     --background: 210 40% 98%;
-    --foreground: 210 20% 20%;
+    --foreground: 215 30% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 20% 20%;
+    --card-foreground: 215 30% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 20%;
+    --popover-foreground: 215 30% 20%;
 
-    --primary: 200 85% 60%;
+    --primary: 205 85% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 190 80% 65%;
+    --secondary: 200 80% 60%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 210 15% 45%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 20% 45%;
 
-    --accent: 200 85% 60%;
+    --accent: 205 85% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 75% 60%;
+    --destructive: 0 80% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 200 85% 60%;
+    --border: 210 25% 90%;
+    --input: 210 25% 90%;
+    --ring: 205 85% 55%;
 
     --radius: 0.75rem;
 
-    --neon-glow: 200 85% 60%;
-    --neon-cyan: 190 80% 65%;
-    --neon-orange: 30 90% 60%;
-    --neon-red: 0 75% 60%;
+    --neon-glow: 205 85% 55%;
+    --neon-cyan: 200 80% 60%;
+    --neon-orange: 25 95% 55%;
+    --neon-red: 0 80% 60%;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 210 20% 20%;
-    --sidebar-primary: 200 85% 60%;
+    --sidebar-foreground: 215 30% 20%;
+    --sidebar-primary: 205 85% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 95%;
-    --sidebar-accent-foreground: 210 20% 20%;
-    --sidebar-border: 210 20% 90%;
-    --sidebar-ring: 200 85% 60%;
-    --chart-1: 200 85% 60%;
-    --chart-2: 190 80% 65%;
-    --chart-3: 210 75% 55%;
-    --chart-4: 180 80% 60%;
-    --chart-5: 210 15% 45%;
+    --sidebar-accent: 210 30% 94%;
+    --sidebar-accent-foreground: 215 30% 20%;
+    --sidebar-border: 210 25% 90%;
+    --sidebar-ring: 205 85% 55%;
+    --chart-1: 205 85% 55%;
+    --chart-2: 200 80% 60%;
+    --chart-3: 215 75% 50%;
+    --chart-4: 190 80% 55%;
+    --chart-5: 215 20% 45%;
     --sidebar: 210 30% 98%;
     --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
     --font-serif: 'Cormorant Garamond', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
     --shadow-2xs: 0 1px 2px 0px rgb(0 0 0 / 0.03);
     --shadow-xs: 0 1px 2px 0px rgb(0 0 0 / 0.03);
-    --shadow-sm: 0 1px 2px 0px rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
     --shadow: 0 1px 3px 0px rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -1px rgb(0 0 0 / 0.05);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -2px rgb(0 0 0 / 0.05);
@@ -74,85 +74,85 @@
   }
 
   .light {
-    --background: 210 30% 98%;
-    --foreground: 210 25% 25%;
+    --background: 205 40% 98%;
+    --foreground: 210 30% 22%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 25% 25%;
+    --card-foreground: 210 30% 22%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 25% 25%;
+    --popover-foreground: 210 30% 22%;
 
-    --primary: 200 85% 60%;
+    --primary: 205 85% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 190 75% 65%;
+    --secondary: 200 75% 58%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 210 15% 45%;
+    --muted: 205 30% 95%;
+    --muted-foreground: 210 25% 45%;
 
-    --accent: 200 85% 60%;
+    --accent: 205 85% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 55%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 92%;
-    --input: 210 25% 92%;
-    --ring: 200 85% 60%;
+    --border: 205 25% 90%;
+    --input: 205 25% 90%;
+    --ring: 205 85% 55%;
 
-    --neon-glow: 200 85% 65%;
-    --neon-cyan: 190 75% 65%;
-    --neon-orange: 30 85% 55%;
-    --neon-red: 0 70% 55%;
+    --neon-glow: 205 85% 60%;
+    --neon-cyan: 200 75% 58%;
+    --neon-orange: 25 95% 55%;
+    --neon-red: 0 75% 55%;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 210 25% 25%;
-    --sidebar-primary: 200 85% 60%;
+    --sidebar-foreground: 210 30% 22%;
+    --sidebar-primary: 205 85% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 95%;
-    --sidebar-accent-foreground: 210 25% 25%;
-    --sidebar-border: 210 25% 92%;
-    --sidebar-ring: 200 85% 60%;
+    --sidebar-accent: 205 30% 95%;
+    --sidebar-accent-foreground: 210 30% 22%;
+    --sidebar-border: 205 25% 90%;
+    --sidebar-ring: 205 85% 55%;
   }
   
   .dark {
-    --background: 210 25% 12%;
+    --background: 210 30% 12%;
     --foreground: 0 0% 98%;
-    --card: 210 20% 15%;
+    --card: 210 25% 15%;
     --card-foreground: 0 0% 98%;
-    --popover: 210 20% 15%;
+    --popover: 210 25% 15%;
     --popover-foreground: 0 0% 98%;
-    --primary: 200 85% 65%;
+    --primary: 205 85% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 190 75% 60%;
+    --secondary: 200 75% 55%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 15% 40%;
+    --muted: 210 20% 40%;
     --muted-foreground: 0 0% 98%;
-    --accent: 200 85% 65%;
+    --accent: 205 85% 60%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 70% 55%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 85% 97%;
     --border: 210 20% 30%;
     --input: 210 20% 30%;
-    --ring: 200 85% 65%;
-    --chart-1: 200 85% 65%;
-    --chart-2: 190 75% 60%;
-    --chart-3: 210 80% 60%;
-    --chart-4: 180 75% 60%;
-    --chart-5: 210 15% 50%;
-    --sidebar: 210 20% 15%;
+    --ring: 205 85% 60%;
+    --chart-1: 205 85% 60%;
+    --chart-2: 200 75% 55%;
+    --chart-3: 215 80% 55%;
+    --chart-4: 190 75% 55%;
+    --chart-5: 210 20% 50%;
+    --sidebar: 210 25% 15%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 200 85% 65%;
+    --sidebar-primary: 205 85% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 190 75% 60%;
+    --sidebar-accent: 200 75% 55%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 210 20% 30%;
-    --sidebar-ring: 200 85% 65%;
+    --sidebar-ring: 205 85% 60%;
     --shadow-2xs: 0 1px 2px 0px rgb(0 0 0 / 0.2);
     --shadow-xs: 0 1px 2px 0px rgb(0 0 0 / 0.2);
-    --shadow-sm: 0 1px 2px 0px rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+    --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
     --shadow: 0 1px 3px 0px rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -1px rgb(0 0 0 / 0.2);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -2px rgb(0 0 0 / 0.2);
@@ -176,16 +176,16 @@
     font-family: 'Orbitron', sans-serif;
   }
   .neon-text {
-    text-shadow: 0 0 8px hsl(var(--neon-glow) / 0.3), 0 0 20px hsl(var(--neon-glow) / 0.15);
+    text-shadow: 0 0 8px hsl(var(--neon-glow) / 0.25), 0 0 20px hsl(var(--neon-glow) / 0.12);
   }
   .neon-cyan-text {
-    text-shadow: 0 0 8px hsl(var(--neon-cyan) / 0.3), 0 0 20px hsl(var(--neon-cyan) / 0.15);
+    text-shadow: 0 0 8px hsl(var(--neon-cyan) / 0.25), 0 0 20px hsl(var(--neon-cyan) / 0.12);
   }
   .neon-border {
-    box-shadow: 0 0 6px hsl(var(--neon-glow) / 0.15), inset 0 0 4px hsl(var(--neon-glow) / 0.05);
+    box-shadow: 0 0 6px hsl(var(--neon-glow) / 0.12), inset 0 0 4px hsl(var(--neon-glow) / 0.04);
   }
   .neon-card {
-    box-shadow: 0 0 12px hsl(var(--neon-glow) / 0.06), 0 4px 20px hsl(210 20% 0% / 0.08);
+    box-shadow: 0 0 12px hsl(var(--neon-glow) / 0.05), 0 4px 20px hsl(210 20% 0% / 0.06);
   }
   .gradient-primary {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--neon-cyan)));
@@ -218,7 +218,7 @@
   height: 5px;
   border-radius: 50%;
   background: hsl(var(--primary));
-  box-shadow: 0 0 6px hsl(var(--primary)), 0 0 12px hsl(var(--neon-glow) / 0.3);
+  box-shadow: 0 0 6px hsl(var(--primary)), 0 0 12px hsl(var(--neon-glow) / 0.25);
   pointer-events: none;
   z-index: 9999;
   animation: click-sparkle-pop 0.6s ease-out forwards;
