@@ -4,39 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reset toàn bộ về giống shopphamtien */
 @layer base {
   :root {
-    /* Màu nền - trắng tinh khiết như shopphamtien */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
-    /* Màu chính - xanh dương nhạt tự nhiên */
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 0 0% 100%;
-
-    /* Màu phụ - xám nhạt */
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
   }
 
@@ -45,13 +34,14 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-slate-900;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
 }
 
+/* Utilities chính - loại bỏ tất cả neon, gradient phức tạp */
 @layer utilities {
-  /* Button - giống shopphamtien */
+  /* Button giống y hệt shopphamtien */
   .btn-primary {
     @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200;
     background-color: #3b82f6;
@@ -72,46 +62,30 @@
     background-color: #f8fafc;
   }
 
-  /* Card - không shadow, viền nhẹ */
+  /* Card đơn giản, không shadow */
   .card {
-    @apply rounded-lg border;
-    border-color: #f1f5f9;
-    background: white;
+    @apply rounded-lg border border-slate-100 bg-white;
   }
 
-  /* Badge */
+  /* Badge đơn giản */
   .badge {
-    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
-    background-color: #f1f5f9;
-    color: #1e293b;
-  }
-
-  /* Link */
-  .link {
-    @apply text-sm font-medium transition-colors;
-    color: #3b82f6;
-  }
-  .link:hover {
-    color: #2563eb;
+    @apply px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700;
   }
 }
 
-/* Animation cho dòng chữ chạy - giống shopphamtien */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  display: inline-block;
-  animation: marquee 20s linear infinite;
-}
-
+/* Marquee - dòng chữ chạy giống shopphamtien */
 .marquee-container {
   border-top: 1px solid #f1f5f9;
   border-bottom: 1px solid #f1f5f9;
   padding: 12px 0;
   background: white;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-text {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
 }
 
 .marquee-item {
@@ -122,4 +96,53 @@
   color: #475569;
   font-size: 0.875rem;
   font-weight: 500;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Dark mode giống shopphamtien */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+}
+
+.dark body {
+  @apply bg-slate-950 text-slate-100;
+}
+
+.dark .card {
+  @apply border-slate-800 bg-slate-900;
+}
+
+.dark .badge {
+  @apply bg-slate-800 text-slate-300;
+}
+
+.dark .marquee-container {
+  border-color: #1e293b;
+  background: #0f172a;
+}
+
+.dark .marquee-item {
+  color: #94a3b8;
 }
