@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@700;800;900&display=swap');
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,278 +6,120 @@
 
 @layer base {
   :root {
-    /* Màu nền - ấm áp, tự nhiên */
-    --background: 45 25% 96%;
-    --foreground: 220 25% 20%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 20%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 20%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Màu xanh chủ đạo - dịu nhẹ nhưng rõ */
-    --primary: 205 75% 45%;
+    /* Màu chính - giống trang mẫu: xanh dương đậm + teal */
+    --primary: 210 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    /* Màu xanh ngọc bổ trợ */
-    --secondary: 185 65% 48%;
+    --secondary: 180 80% 40%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Màu nhấn - vàng/cam ấm */
-    --accent: 35 85% 55%;
+    --accent: 30 100% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --muted: 45 15% 92%;
-    --muted-foreground: 220 15% 40%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --destructive: 0 65% 55%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 145 55% 42%;
-    --success-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 210 100% 50%;
 
-    --warning: 35 80% 52%;
-    --warning-foreground: 0 0% 100%;
+    --radius: 0.5rem;
 
-    --border: 45 15% 88%;
-    --input: 45 15% 88%;
-    --ring: 205 75% 45%;
-
-    --radius: 0.75rem;
-
-    /* Gradient tự nhiên, mềm mại */
-    --gradient-primary: linear-gradient(145deg, #2c7da0 0%, #61a5c2 100%);
-    --gradient-soft: linear-gradient(145deg, #e9ecef 0%, #dee2e6 100%);
-    --gradient-warm: linear-gradient(145deg, #ffe8d6 0%, #ffd6ba 100%);
-    --gradient-cool: linear-gradient(145deg, #d8f3dc 0%, #b7e4c7 100%);
-
-    /* Shadow mềm, tự nhiên */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
-    --shadow: 0 4px 8px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 16px 24px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.04);
-    --shadow-xl: 0 24px 32px rgba(0, 0, 0, 0.04), 0 12px 24px rgba(0, 0, 0, 0.04);
-
-    --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-    --font-serif: 'Cormorant Garamond', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    
-    --tracking-normal: 0em;
-    --spacing: 0.25rem;
+    /* Shadow cực nhẹ - gần như không thấy */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.02);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.02);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -1px rgb(0 0 0 / 0.02);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.03), 0 4px 6px -2px rgb(0 0 0 / 0.02);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.03), 0 8px 10px -6px rgb(0 0 0 / 0.02);
   }
 
-  .light {
-    --background: 45 25% 96%;
-    --foreground: 220 25% 20%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 20%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 20%;
-    --primary: 205 75% 45%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 185 65% 48%;
-    --secondary-foreground: 0 0% 100%;
-    --accent: 35 85% 55%;
-    --accent-foreground: 0 0% 100%;
-    --muted: 45 15% 92%;
-    --muted-foreground: 220 15% 40%;
-    --destructive: 0 65% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 45 15% 88%;
-    --input: 45 15% 88%;
-    --ring: 205 75% 45%;
-  }
-  
-  .dark {
-    --background: 220 25% 12%;
-    --foreground: 0 0% 98%;
-    --card: 220 20% 16%;
-    --card-foreground: 0 0% 98%;
-    --popover: 220 20% 16%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 205 75% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 185 65% 52%;
-    --secondary-foreground: 0 0% 100%;
-    --accent: 35 85% 58%;
-    --accent-foreground: 0 0% 100%;
-    --muted: 220 15% 40%;
-    --muted-foreground: 0 0% 80%;
-    --destructive: 0 65% 58%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 30%;
-    --input: 220 15% 30%;
-    --ring: 205 75% 50%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
 }
 
 @layer utilities {
-  .font-display {
-    font-family: 'Orbitron', sans-serif;
-  }
-  
-  /* Gradient tự nhiên */
+  /* Gradient mềm mại, tự nhiên */
   .gradient-primary {
-    background: linear-gradient(145deg, #2c7da0 0%, #61a5c2 100%);
+    background: linear-gradient(135deg, #0066ff 0%, #00b4d8 100%);
   }
+  
   .gradient-soft {
-    background: linear-gradient(145deg, #e9ecef 0%, #dee2e6 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   }
-  .gradient-warm {
-    background: linear-gradient(145deg, #ffe8d6 0%, #ffd6ba 100%);
-  }
-  .gradient-cool {
-    background: linear-gradient(145deg, #d8f3dc 0%, #b7e4c7 100%);
-  }
-  
-  /* Text gradient nhẹ nhàng */
-  .text-gradient-primary {
-    background: linear-gradient(145deg, #2c7da0 0%, #61a5c2 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  /* Button - mềm mại, tự nhiên */
+
+  /* Button mềm, không shadow quá đậm */
   .btn-primary {
-    @apply px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300;
-    background: linear-gradient(145deg, #2c7da0 0%, #61a5c2 100%);
-    box-shadow: 0 2px 8px rgba(44, 125, 160, 0.2);
+    @apply px-5 py-2.5 rounded-lg font-semibold text-white transition-all duration-200;
+    background: linear-gradient(135deg, #0066ff 0%, #00b4d8 100%);
   }
+  
   .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(44, 125, 160, 0.3);
+    transform: translateY(-1px);
+    filter: brightness(1.02);
   }
-  
-  .btn-secondary {
-    @apply px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300;
-    background: linear-gradient(145deg, #3b8d6e 0%, #5cad8e 100%);
-    box-shadow: 0 2px 8px rgba(59, 141, 110, 0.2);
-  }
-  .btn-secondary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(59, 141, 110, 0.3);
-  }
-  
+
   .btn-outline {
-    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 border-2;
-    border-color: #2c7da0;
-    color: #2c7da0;
-    background: transparent;
+    @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200 border;
+    border-color: #e2e8f0;
+    color: #1e293b;
+    background: white;
   }
+  
   .btn-outline:hover {
-    background: linear-gradient(145deg, #2c7da0 0%, #61a5c2 100%);
-    color: white;
-    border-color: transparent;
-    box-shadow: 0 4px 12px rgba(44, 125, 160, 0.25);
+    border-color: #0066ff;
+    color: #0066ff;
+    background: #f8fafc;
   }
-  
-  /* Card với hiệu ứng mềm */
+
+  /* Card - không shadow đậm, bo góc nhẹ */
   .card-hover {
-    @apply bg-card rounded-xl transition-all duration-400;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.04);
-  }
-  .card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 28px -8px rgba(0, 0, 0, 0.08), 0 8px 12px -4px rgba(0, 0, 0, 0.04);
+    @apply bg-white rounded-lg transition-all duration-200;
+    border: 1px solid #f1f5f9;
   }
   
+  .card-hover:hover {
+    border-color: #e2e8f0;
+    transform: translateY(-2px);
+  }
+
   /* Badge nhẹ nhàng */
   .badge-primary {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(145deg, #d4eaf7 0%, #e3f2f9 100%);
-    color: #1f5e7a;
+    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
+    background: #eef2ff;
+    color: #0066ff;
   }
-  .badge-success {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(145deg, #d8f3dc 0%, #e6f9ed 100%);
-    color: #2d6a4f;
-  }
-  .badge-warning {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(145deg, #fff3e0 0%, #ffefd6 100%);
-    color: #b45f06;
+  
+  .badge-cyan {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
+    background: #ecfdf5;
+    color: #0d9488;
   }
 }
 
-/* Animations mượt mà */
-@keyframes logo-bounce {
-  0% { transform: scale(1); }
-  30% { transform: scale(0.95); }
-  60% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+/* Animation mượt mà */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.logo-bounce {
-  animation: logo-bounce 0.5s ease-out;
-}
-
-@keyframes click-sparkle-pop {
-  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-  50% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.1); opacity: 0.8; }
-  100% { transform: translate(calc(-50% + var(--tx) * 1.2), calc(-50% + var(--ty) * 1.2)) scale(0); opacity: 0; }
-}
-
-.click-sparkle {
-  position: fixed;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #2c7da0;
-  box-shadow: 0 0 6px #2c7da0, 0 0 12px #61a5c2;
-  pointer-events: none;
-  z-index: 9999;
-  animation: click-sparkle-pop 0.6s ease-out forwards;
-}
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-spin-slow {
-  animation: none;
-}
-.animate-spin-slow:hover {
-  animation: spin-slow 0.8s linear;
-}
-
-@keyframes slide-up {
-  from { transform: translateY(16px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.animate-slide-up {
-  animation: slide-up 0.4s ease-out forwards;
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  display: inline-block;
-  animation: marquee 12s linear infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
 }
