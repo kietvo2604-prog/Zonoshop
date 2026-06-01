@@ -9,55 +9,58 @@
 
 @layer base {
   :root {
-    --background: 210 30% 98%;
-    --foreground: 220 25% 20%;
+    /* Màu nền và chữ - đậm và rõ ràng hơn */
+    --background: 220 25% 97%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 20%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 20%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 205 85% 55%;
+    /* Màu chính - xanh dương đậm (#3b82f6) */
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 280 70% 60%;
+    /* Màu phụ - xanh lơ đậm (cyan) */
+    --secondary: 196 95% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 350 75% 60%;
+    /* Màu nhấn - tím/cam nổi bật */
+    --accent: 271 91% 65%;
     --accent-foreground: 0 0% 100%;
 
-    --muted: 220 15% 94%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 220 15% 90%;
+    --muted-foreground: 220 15% 35%;
 
-    --destructive: 0 75% 55%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 145 70% 45%;
+    --success: 142 76% 45%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 35 90% 55%;
+    --warning: 35 92% 55%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 205 85% 55%;
+    --border: 220 20% 85%;
+    --input: 220 20% 85%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
 
-    /* Gradient chuyển màu nhẹ nhàng */
-    --gradient-blue: linear-gradient(135deg, #5dade2 0%, #2e86c1 100%);
-    --gradient-purple: linear-gradient(135deg, #a569bd 0%, #7d3c98 100%);
-    --gradient-pink: linear-gradient(135deg, #f5b7b1 0%, #ec7063 100%);
-    --gradient-green: linear-gradient(135deg, #7dcea0 0%, #27ae60 100%);
-    --gradient-soft: linear-gradient(135deg, #85c1e9 0%, #aed6f1 100%);
-    --gradient-warm: linear-gradient(135deg, #fad7a0 0%, #f0b27a 100%);
+    /* Gradient chuyển màu rực rỡ (giống phong cách trang mẫu) */
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+    --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
 
-    /* Shadow nhẹ */
-    --shadow-sm: 0 1px 2px 0px rgb(0 0 0 / 0.04);
-    --shadow: 0 1px 3px 0px rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -1px rgb(0 0 0 / 0.05);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    /* Shadow rõ nét hơn */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
     --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
     --font-serif: 'Cormorant Garamond', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
@@ -68,65 +71,47 @@
   }
 
   .light {
-    --background: 210 30% 98%;
-    --foreground: 220 25% 22%;
-
+    --background: 220 25% 97%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 22%;
-
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 22%;
-
-    --primary: 205 85% 55%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 280 70% 60%;
+    --secondary: 196 95% 50%;
     --secondary-foreground: 0 0% 100%;
-
-    --accent: 350 75% 60%;
+    --accent: 271 91% 65%;
     --accent-foreground: 0 0% 100%;
-
-    --muted: 220 15% 95%;
-    --muted-foreground: 220 15% 45%;
-
-    --destructive: 0 75% 55%;
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 15% 35%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
-    --ring: 205 85% 55%;
-
-    --gradient-blue: linear-gradient(135deg, #5dade2 0%, #2e86c1 100%);
-    --gradient-purple: linear-gradient(135deg, #a569bd 0%, #7d3c98 100%);
-    --gradient-pink: linear-gradient(135deg, #f5b7b1 0%, #ec7063 100%);
-    --gradient-green: linear-gradient(135deg, #7dcea0 0%, #27ae60 100%);
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 217 91% 60%;
   }
   
   .dark {
-    --background: 220 25% 12%;
-    --foreground: 0 0% 98%;
-    --card: 220 20% 16%;
-    --card-foreground: 0 0% 98%;
-    --popover: 220 20% 16%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 205 85% 60%;
+    --background: 222 47% 11%;
+    --foreground: 0 0% 100%;
+    --card: 222 45% 15%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 45% 15%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 280 70% 65%;
+    --secondary: 196 95% 50%;
     --secondary-foreground: 0 0% 100%;
-    --accent: 350 75% 65%;
+    --accent: 271 91% 65%;
     --accent-foreground: 0 0% 100%;
-    --muted: 220 15% 40%;
-    --muted-foreground: 0 0% 98%;
-    --destructive: 0 75% 60%;
-    --destructive-foreground: 0 85% 97%;
-    --border: 220 15% 30%;
-    --input: 220 15% 30%;
-    --ring: 205 85% 60%;
-    
-    --gradient-blue: linear-gradient(135deg, #3498db 0%, #2471a3 100%);
-    --gradient-purple: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%);
-    --gradient-pink: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    --gradient-green: linear-gradient(135deg, #2ecc71 0%, #239b56 100%);
+    --muted: 222 40% 25%;
+    --muted-foreground: 0 0% 80%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 40% 25%;
+    --input: 222 40% 25%;
+    --ring: 217 91% 60%;
   }
 }
 
@@ -145,127 +130,104 @@
     font-family: 'Orbitron', sans-serif;
   }
   
-  /* Gradient backgrounds - nhẹ nhàng, mượt mà */
+  /* Gradient rực rỡ (giống trang mẫu) */
   .gradient-primary {
-    background: linear-gradient(135deg, #5dade2 0%, #2e86c1 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
   }
   .gradient-secondary {
-    background: linear-gradient(135deg, #a569bd 0%, #7d3c98 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
   }
   .gradient-accent {
-    background: linear-gradient(135deg, #f5b7b1 0%, #ec7063 100%);
+    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
   }
   .gradient-success {
-    background: linear-gradient(135deg, #7dcea0 0%, #27ae60 100%);
-  }
-  .gradient-soft-blue {
-    background: linear-gradient(135deg, #d6eaf8 0%, #aed6f1 100%);
-  }
-  .gradient-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
   }
   
-  /* Text gradient (chữ chuyển màu) */
+  /* Text gradient */
   .text-gradient-primary {
-    background: linear-gradient(135deg, #5dade2 0%, #2e86c1 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .text-gradient-secondary {
-    background: linear-gradient(135deg, #a569bd 0%, #7d3c98 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   
-  /* Card với border gradient */
-  .card-gradient-border {
-    background: white;
-    border-radius: 1rem;
-    position: relative;
-    box-shadow: var(--shadow-md);
-  }
-  .card-gradient-border::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 1rem;
-    padding: 2px;
-    background: linear-gradient(135deg, #5dade2, #a569bd);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  /* Button styles */
+  /* Button styles - nổi bật, đậm màu */
   .btn-primary {
-    @apply px-5 py-2.5 rounded-xl font-semibold text-white transition-all duration-300;
-    background: linear-gradient(135deg, #5dade2 0%, #2e86c1 100%);
+    @apply px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300;
+    background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
   }
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px -6px #5dade2;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
   }
   
   .btn-secondary {
-    @apply px-5 py-2.5 rounded-xl font-semibold text-white transition-all duration-300;
-    background: linear-gradient(135deg, #a569bd 0%, #7d3c98 100%);
+    @apply px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300;
+    background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
   }
   .btn-secondary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px -6px #a569bd;
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
   }
   
-  .btn-outline {
-    @apply px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 border-2;
-    border-color: #5dade2;
-    color: #2e86c1;
+  .btn-outline-primary {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 border-2;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: transparent;
   }
-  .btn-outline:hover {
-    background: linear-gradient(135deg, #5dade2 0%, #2e86c1 100%);
+  .btn-outline-primary:hover {
+    background: #3b82f6;
     color: white;
-    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
   }
   
-  /* Badge styles */
-  .badge-blue {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(135deg, #d6eaf8 0%, #aed6f1 100%);
-    color: #1a5276;
+  /* Card với viền và bóng đậm */
+  .card-hover {
+    @apply bg-card rounded-xl transition-all duration-300;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -1px rgb(0 0 0 / 0.05);
   }
-  .badge-purple {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(135deg, #e8daef 0%, #d2b4de 100%);
-    color: #6c3483;
-  }
-  .badge-green {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(135deg, #d5f5e3 0%, #a9dfbf 100%);
-    color: #1e8449;
-  }
-  .badge-pink {
-    @apply px-3 py-1 rounded-full text-sm font-medium;
-    background: linear-gradient(135deg, #fadbd8 0%, #f5b7b1 100%);
-    color: #922b21;
-  }
-
-  /* Animated gradient (chuyển động nhẹ) */
-  @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
   
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
+  /* Badge đậm màu */
+  .badge-primary {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+    background: #3b82f6;
+    color: white;
+  }
+  .badge-secondary {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+    background: #8b5cf6;
+    color: white;
+  }
+  .badge-cyan {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+    background: #06b6d4;
+    color: white;
+  }
+  
+  /* Neon glow nhẹ */
+  .glow-primary {
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+  }
+  .glow-secondary {
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
   }
 }
 
-/* Animations */
+/* Animations giữ nguyên */
 @keyframes logo-bounce {
   0% { transform: scale(1); }
   30% { transform: scale(0.9); }
@@ -288,8 +250,8 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #5dade2;
-  box-shadow: 0 0 6px #5dade2, 0 0 12px #2e86c1;
+  background: #3b82f6;
+  box-shadow: 0 0 6px #3b82f6, 0 0 12px #06b6d4;
   pointer-events: none;
   z-index: 9999;
   animation: click-sparkle-pop 0.6s ease-out forwards;
@@ -328,7 +290,7 @@
 
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-8px); }
   100% { transform: translateY(0px); }
 }
 
