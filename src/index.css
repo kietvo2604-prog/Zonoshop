@@ -6,43 +6,38 @@
 
 @layer base {
   :root {
+    /* Màu nền - trắng tinh khiết như shopphamtien */
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    /* Màu chính - giống trang mẫu: xanh dương đậm + teal */
-    --primary: 210 100% 50%;
+    /* Màu chính - xanh dương nhạt tự nhiên */
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 180 80% 40%;
-    --secondary-foreground: 0 0% 100%;
+    /* Màu phụ - xám nhạt */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --accent: 30 100% 55%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 210 100% 50%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    /* Shadow cực nhẹ - gần như không thấy */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.02);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.02);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -1px rgb(0 0 0 / 0.02);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.03), 0 4px 6px -2px rgb(0 0 0 / 0.02);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.03), 0 8px 10px -6px rgb(0 0 0 / 0.02);
   }
 
   * {
@@ -56,70 +51,75 @@
 }
 
 @layer utilities {
-  /* Gradient mềm mại, tự nhiên */
-  .gradient-primary {
-    background: linear-gradient(135deg, #0066ff 0%, #00b4d8 100%);
-  }
-  
-  .gradient-soft {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  }
-
-  /* Button mềm, không shadow quá đậm */
+  /* Button - giống shopphamtien */
   .btn-primary {
-    @apply px-5 py-2.5 rounded-lg font-semibold text-white transition-all duration-200;
-    background: linear-gradient(135deg, #0066ff 0%, #00b4d8 100%);
+    @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200;
+    background-color: #3b82f6;
+    color: white;
   }
-  
   .btn-primary:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.02);
+    background-color: #2563eb;
   }
 
   .btn-outline {
     @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200 border;
+    background-color: transparent;
     border-color: #e2e8f0;
     color: #1e293b;
+  }
+  .btn-outline:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+  }
+
+  /* Card - không shadow, viền nhẹ */
+  .card {
+    @apply rounded-lg border;
+    border-color: #f1f5f9;
     background: white;
   }
-  
-  .btn-outline:hover {
-    border-color: #0066ff;
-    color: #0066ff;
-    background: #f8fafc;
+
+  /* Badge */
+  .badge {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
+    background-color: #f1f5f9;
+    color: #1e293b;
   }
 
-  /* Card - không shadow đậm, bo góc nhẹ */
-  .card-hover {
-    @apply bg-white rounded-lg transition-all duration-200;
-    border: 1px solid #f1f5f9;
+  /* Link */
+  .link {
+    @apply text-sm font-medium transition-colors;
+    color: #3b82f6;
   }
-  
-  .card-hover:hover {
-    border-color: #e2e8f0;
-    transform: translateY(-2px);
-  }
-
-  /* Badge nhẹ nhàng */
-  .badge-primary {
-    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
-    background: #eef2ff;
-    color: #0066ff;
-  }
-  
-  .badge-cyan {
-    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
-    background: #ecfdf5;
-    color: #0d9488;
+  .link:hover {
+    color: #2563eb;
   }
 }
 
-/* Animation mượt mà */
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Animation cho dòng chữ chạy - giống shopphamtien */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
+
+.marquee-container {
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 12px 0;
+  background: white;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 24px;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
