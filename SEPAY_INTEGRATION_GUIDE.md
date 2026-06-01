@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sepay QR code generation is now fully integrated into ShopKietZ. When users sign up, they automatically get a dynamic MB Bank QR code generated via Sepay API.
+Sepay QR code generation is now fully integrated into ZonoShop. When users sign up, they automatically get a dynamic MB Bank QR code generated via Sepay API.
 
 ## Configuration
 
@@ -178,4 +178,4 @@ const { data } = await supabase.functions.invoke("generate-sepay-qr", {
 
 - [Sepay API Docs](https://sepay.vn/api)
 - [Supabase Functions](https://supabase.com/docs/guides/functions)
-- [ShopKietZ TopUp Flow](./AUTO_APPROVE_ATM_FEATURE.md)
+- [ZonoShop TopUp Flow](./AUTO_APPROVE_ATM_FEATURE.md)

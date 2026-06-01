@@ -7,7 +7,7 @@ type ShopSetting = {
   value: string;
 };
 
-const DEFAULT_TITLE = "SHOPKIETZ - SHOP ACC BLOX FRUITS, ACC RANDOM, ROBUX UY TÍN";
+const DEFAULT_TITLE = "ZonoShop - SHOP ACC BLOX FRUITS, ACC RANDOM, ROBUX UY TÍN";
 const DEFAULT_DESC = "🔥 Giao dịch tự động 24/7 – Mua là có ngay\n🛡️ Bảo mật tuyệt đối – Cam kết uy tín\n💰 Giá cả học sinh – Chất lượng hàng đầu";
 
 const AnnouncementBanner = () => {
