@@ -1,101 +1,256 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Reset toàn bộ về giống shopphamtien */
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 210 20% 15%;
+
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 20% 15%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 210 20% 15%;
+
+    --primary: 215 95% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 200 90% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 10% 35%;
+
+    --accent: 215 95% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 88%;
+    --input: 210 15% 88%;
+    --ring: 215 95% 50%;
+
     --radius: 0.5rem;
+
+    --neon-glow: 215 95% 50%;
+    --neon-cyan: 200 90% 55%;
+    --neon-orange: 30 100% 50%;
+    --neon-red: 0 85% 52%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 12%;
+    --sidebar-primary: 215 95% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 16% 90%;
+    --sidebar-accent-foreground: 220 25% 12%;
+    --sidebar-border: 210 16% 84%;
+    --sidebar-ring: 215 95% 50%;
+    --chart-1: 215 95% 50%;
+    --chart-2: 200 90% 55%;
+    --chart-3: 210 75% 45%;
+    --chart-4: 195 85% 50%;
+    --chart-5: 240 3% 46%;
+    --sidebar: 0 0% 98%;
+    --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-serif: 'Cormorant Garamond', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
   }
 
+  .light {
+    --background: 210 20% 95%;
+    --foreground: 220 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 12%;
+
+    --primary: 215 95% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 200 90% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 15% 88%;
+    --muted-foreground: 220 15% 35%;
+
+    --accent: 215 95% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 82%;
+    --input: 210 15% 82%;
+    --ring: 215 95% 50%;
+
+    --neon-glow: 215 95% 50%;
+    --neon-cyan: 200 90% 55%;
+    --neon-orange: 30 100% 50%;
+    --neon-red: 0 90% 50%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 12%;
+    --sidebar-primary: 215 95% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 15% 88%;
+    --sidebar-accent-foreground: 220 25% 12%;
+    --sidebar-border: 210 15% 82%;
+    --sidebar-ring: 215 95% 50%;
+  }
+  .dark {
+    --background: 240 5% 10%;
+    --foreground: 0 0% 98%;
+    --card: 240 3% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 5% 26%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 215 95% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 90% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 3% 46%;
+    --muted-foreground: 0 0% 98%;
+    --accent: 215 95% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 240 5% 33%;
+    --input: 240 5% 33%;
+    --ring: 215 95% 55%;
+    --chart-1: 215 95% 55%;
+    --chart-2: 200 90% 50%;
+    --chart-3: 220 85% 45%;
+    --chart-4: 195 85% 50%;
+    --chart-5: 240 3% 46%;
+    --sidebar: 240 3% 15%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 215 95% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 90% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 5% 33%;
+    --sidebar-ring: 215 95% 55%;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-white text-slate-900;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
   }
 }
 
-/* Utilities chính - loại bỏ tất cả neon, gradient phức tạp */
 @layer utilities {
-  /* Button giống y hệt shopphamtien */
-  .btn-primary {
-    @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200;
-    background-color: #3b82f6;
-    color: white;
+  .font-display {
+    font-family: 'Orbitron', sans-serif;
   }
-  .btn-primary:hover {
-    background-color: #2563eb;
+  .neon-text {
+    text-shadow: 0 0 10px hsl(var(--neon-glow) / 0.6), 0 0 30px hsl(var(--neon-glow) / 0.3);
   }
-
-  .btn-outline {
-    @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-200 border;
-    background-color: transparent;
-    border-color: #e2e8f0;
-    color: #1e293b;
+  .neon-cyan-text {
+    text-shadow: 0 0 10px hsl(var(--neon-cyan) / 0.6), 0 0 30px hsl(var(--neon-cyan) / 0.3);
   }
-  .btn-outline:hover {
-    border-color: #cbd5e1;
-    background-color: #f8fafc;
+  .neon-border {
+    box-shadow: 0 0 8px hsl(var(--neon-glow) / 0.3), inset 0 0 8px hsl(var(--neon-glow) / 0.1);
   }
-
-  /* Card đơn giản, không shadow */
-  .card {
-    @apply rounded-lg border border-slate-100 bg-white;
+  .neon-card {
+    box-shadow: 0 0 15px hsl(var(--neon-glow) / 0.1), 0 4px 20px hsl(220 20% 0% / 0.5);
   }
-
-  /* Badge đơn giản */
-  .badge {
-    @apply px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700;
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--neon-cyan)));
+  }
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--neon-orange)), hsl(var(--neon-red)));
   }
 }
 
-/* Marquee - dòng chữ chạy giống shopphamtien */
-.marquee-container {
-  border-top: 1px solid #f1f5f9;
-  border-bottom: 1px solid #f1f5f9;
-  padding: 12px 0;
-  background: white;
-  overflow: hidden;
-  white-space: nowrap;
+@keyframes logo-bounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.9); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
-.marquee-text {
-  display: inline-block;
-  animation: marquee 20s linear infinite;
+.logo-bounce {
+  animation: logo-bounce 0.5s ease-out;
 }
 
-.marquee-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 24px;
-  color: #475569;
-  font-size: 0.875rem;
-  font-weight: 500;
+@keyframes click-sparkle-pop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  50% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.2); opacity: 0.8; }
+  100% { transform: translate(calc(-50% + var(--tx) * 1.5), calc(-50% + var(--ty) * 1.5)) scale(0); opacity: 0; }
+}
+
+.click-sparkle {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  box-shadow: 0 0 6px hsl(var(--primary)), 0 0 12px hsl(var(--neon-glow) / 0.5);
+  pointer-events: none;
+  z-index: 9999;
+  animation: click-sparkle-pop 0.6s ease-out forwards;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: none;
+}
+.animate-spin-slow:hover {
+  animation: spin-slow 1s linear;
+}
+
+@keyframes pulse-neon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s ease-in-out infinite;
 }
 
 @keyframes marquee {
@@ -103,46 +258,7 @@
   100% { transform: translateX(-50%); }
 }
 
-/* Dark mode giống shopphamtien */
-.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
-}
-
-.dark body {
-  @apply bg-slate-950 text-slate-100;
-}
-
-.dark .card {
-  @apply border-slate-800 bg-slate-900;
-}
-
-.dark .badge {
-  @apply bg-slate-800 text-slate-300;
-}
-
-.dark .marquee-container {
-  border-color: #1e293b;
-  background: #0f172a;
-}
-
-.dark .marquee-item {
-  color: #94a3b8;
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 12s linear infinite;
 }
