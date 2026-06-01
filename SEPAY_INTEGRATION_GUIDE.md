@@ -16,7 +16,7 @@ API Key: L8RMFVLQ3E1Z0ESVN8BIUCMFSPQJXVBDOWBAMDJWG24A9GP3QHY0BKXZUHTIPWOL
 ```
 Bank: MB Bank
 Account Number: 0987672604
-Account Holder: VO ANH KIET
+Account Holder: NGUYEN NGOC QUY
 ```
 
 ## How It Works
@@ -43,7 +43,7 @@ New columns added to `profiles` table:
 - bank_qr_code: TEXT (URL of generated QR code)
 - bank_account: VARCHAR(20) (e.g., "0987672604")
 - bank_name: VARCHAR(10) (default: "MB")
-- account_holder: VARCHAR(100) (e.g., "VO ANH KIET")
+- account_holder: VARCHAR(100) (e.g., "NGUYEN NGOC QUY")
 - qr_generated_at: TIMESTAMP (when QR was generated)
 ```
 
@@ -77,7 +77,7 @@ supabase.functions.invoke("generate-sepay-qr", {
   "qr_url": "https://api.sepay.vn/...",
   "bank": "MB",
   "account": "0987672604",
-  "account_name": "VO ANH KIET",
+  "account_name": "NGUYEN NGOC QUY",
   "transfer_code": "KIETZ_ABC123..."
 }
 ```
@@ -89,7 +89,7 @@ The function generates Sepay QR codes using:
 https://api.sepay.vn/api/qrcode/generate?
   bank=MB&
   account=0987672604&
-  accountName=VO ANH KIET&
+  accountName=NGUYEN NGOC QUY&
   desc=TRANSFER_CODE&
   amount=AMOUNT (optional)
 ```

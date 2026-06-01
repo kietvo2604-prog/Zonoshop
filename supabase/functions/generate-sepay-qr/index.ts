@@ -32,7 +32,7 @@ serve(async (req) => {
     
     // MB Bank details
     const BANK_ACCOUNT = "0987672604";
-    const ACCOUNT_NAME = "VO ANH KIET";
+    const ACCOUNT_NAME = "NGUYEN NGOC QUY";
 
     // Generate Sepay QR code
     // Format: https://api.sepay.vn/api/qrcode/generate?bank=MB&account={account}&amount={amount}&accountName={accountName}&desc={desc}

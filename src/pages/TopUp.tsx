@@ -12,8 +12,8 @@ import {
 import { Link } from "react-router-dom";
 
 const banks: { name: string; number: string; holder: string }[] = [
-  { name: "MB Bank", number: "0987672604", holder: "VO ANH KIET" },
-  { name: "BV Bank", number: "99ZP25275M36980652", holder: "ZALOPAY_VO ANH KIET" },
+  { name: "MB Bank", number: "0987672604", holder: "NGUYEN NGOC QUY" },
+  { name: "BV Bank", number: "99ZP25275M36980652", holder: "ZALOPAY_NGUYEN NGOC QUY" },
 ];
 
 const cardTypes = [
@@ -420,7 +420,7 @@ const TopUp = () => {
                     </div>
                     <div>
                       <h3 className="text-white font-bold">MB Bank</h3>
-                      <p className="text-blue-100 text-xs">VO ANH KIET</p>
+                      <p className="text-blue-100 text-xs">NGUYEN NGOC QUY</p>
                     </div>
                   </div>
 
@@ -466,7 +466,7 @@ const TopUp = () => {
 
                       <div className="flex items-center justify-between pb-2 border-b border-gray-200">
                         <span className="text-gray-600">Chủ tài khoản</span>
-                        <span className="font-bold text-gray-900">VO ANH KIET</span>
+                        <span className="font-bold text-gray-900">NGUYEN NGOC QUY</span>
                       </div>
 
                       {/* Transfer Code */}
