@@ -12,7 +12,7 @@ import {
 import { Link } from "react-router-dom";
 
 const banks: { name: string; number: string; holder: string }[] = [
-  { name: "MB Bank", number: "0987672604", holder: "NGUYEN NGOC QUY" },
+  { name: "MB Bank", number: "0365739178", holder: "NGUYEN NGOC QUY" },
   { name: "BV Bank", number: "99ZP25275M36980652", holder: "ZALOPAY_NGUYEN NGOC QUY" },
 ];
 
@@ -450,9 +450,9 @@ const TopUp = () => {
                       <div className="flex items-center justify-between pb-2 border-b border-gray-200">
                         <span className="text-gray-600">Số tài khoản</span>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-gray-900">0987672604</span>
+                          <span className="font-mono font-bold text-gray-900">0365739178</span>
                           <button 
-                            onClick={() => handleCopy("0987672604", "MB Bank")} 
+                            onClick={() => handleCopy("0365739178", "MB Bank")} 
                             className="text-blue-600 hover:text-blue-700 text-xs flex items-center gap-1"
                           >
                             {copiedField === "MB Bank" ? (

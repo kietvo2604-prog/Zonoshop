@@ -31,7 +31,7 @@ serve(async (req) => {
     const SEPAY_API_KEY = "L8RMFVLQ3E1Z0ESVN8BIUCMFSPQJXVBDOWBAMDJWG24A9GP3QHY0BKXZUHTIPWOL";
     
     // MB Bank details
-    const BANK_ACCOUNT = "0987672604";
+    const BANK_ACCOUNT = "0365739178";
     const ACCOUNT_NAME = "NGUYEN NGOC QUY";
 
     // Generate Sepay QR code
