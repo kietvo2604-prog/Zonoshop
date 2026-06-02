@@ -199,10 +199,6 @@ const Header = () => {
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
                   <Smartphone className="w-4 h-4 text-accent" /> Thẻ cào
                 </button>
-                <button onClick={() => { navigate("/nap-tien?method=ewallet"); setTopupOpen(false); }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
-                  <Wallet className="w-4 h-4 text-primary" /> Ví điện tử
-                </button>
               </div>
             )}
           </div>
