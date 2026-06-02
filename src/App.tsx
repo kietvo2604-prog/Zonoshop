@@ -25,6 +25,9 @@ import ClickSparkle from "./components/ClickSparkle";
 import TopupNotifier from "./components/TopupNotifier";
 import KietzBadge from "./components/KietzBadge";
 import PageLoader from "./components/PageLoader";
+// THÊM IMPORT CHO 2 TRANG MỚI
+import CardTopUp from "./pages/CardTopUp";
+import BankTopUp from "./pages/BankTopUp";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +44,15 @@ const App = () => (
           <PageLoader />
           <Routes>
             <Route path="/" element={<Index />} />
+            
+            {/* THÊM 2 ROUTE MỚI - không xóa route cũ */}
+            <Route path="/nap-tien/the-cao" element={<CardTopUp />} />
+            <Route path="/nap-tien/chuyen-khoan" element={<BankTopUp />} />
+            
+            {/* GIỮ NGUYÊN route cũ */}
             <Route path="/nap-tien" element={<TopUp />} />
+            
+            {/* CÁC ROUTE KHÁC GIỮ NGUYÊN */}
             <Route path="/lich-su" element={<History />} />
             <Route path="/lich-su-nap" element={<TopUpHistory />} />
             <Route path="/lich-su-mua" element={<PurchaseHistory />} />
