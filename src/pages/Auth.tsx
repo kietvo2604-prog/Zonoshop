@@ -62,7 +62,13 @@ const Auth = () => {
       }
       const { error } = await supabase.auth.signInWithPassword({ email: foundEmail as string, password });
       if (error) {
-        setError("Mật khẩu không đúng");
+        if (error.message.toLowerCase().includes("email not confirmed")) {
+          setError("Email chưa được xác nhận. Vui lòng kiểm tra hộp thư và xác nhận email trước khi đăng nhập.");
+        } else if (error.message.toLowerCase().includes("invalid login credentials") || error.message.toLowerCase().includes("invalid password")) {
+          setError("Mật khẩu không đúng.");
+        } else {
+          setError(error.message || "Đăng nhập thất bại. Vui lòng thử lại.");
+        }
       } else {
         navigate("/");
       }
